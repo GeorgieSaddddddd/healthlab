@@ -193,7 +193,7 @@ bash <(curl -sL https://raw.githubusercontent.com/haru-mishi/healthlab/main/scri
 
 ## Part 2 — S3: ที่เก็บไฟล์ผลตรวจ (5 นาที)
 
-1. **2.1** ค้นหา **S3** → **Create bucket** → General purpose · Bucket name `healthlab-uploads-<รหัส>` (ต้องขึ้นต้นด้วย `healthlab-uploads-` เพราะสคริปต์หาจากชื่อนี้)
+1. **2.1** ค้นหา **S3** → **Create bucket** → General purpose · **Bucket namespace** ปล่อยค่าเริ่มต้น **Global** · Bucket name `healthlab-uploads-<รหัส>` (ต้องขึ้นต้นด้วย `healthlab-uploads-` เพราะสคริปต์หาจากชื่อนี้)
 2. **2.2** **Block all public access ติ๊กไว้** (ค่าเริ่มต้น — ไฟล์ผลตรวจเป็นข้อมูลส่วนตัว) · ที่เหลือค่าเดิม → **Create bucket**
 3. **2.3** เข้า bucket → แท็บ **Permissions**
 4. **2.4** **Cross-origin resource sharing (CORS)** → **Edit** → วาง JSON นี้ (แก้ URL เป็นค่า ① **ไม่มี `/` ท้าย**) → **Save changes**
@@ -221,7 +221,7 @@ bash <(curl -sL https://raw.githubusercontent.com/haru-mishi/healthlab/main/scri
 
 ## Part 4 — SNS: ส่งอีเมลรายงานและแจ้งเตือน (5 นาที)
 
-1. **4.1** ค้นหา **Simple Notification Service** → Topics → **Create topic** · Type **Standard** · Name `healthlab-alerts` → Create topic
+1. **4.1** ค้นหา **Simple Notification Service** → Topics → **Create topic** · Type **Standard** (ค่าเริ่มต้นเป็น **FIFO** ต้องเปลี่ยน — FIFO ส่งอีเมลไม่ได้) · Name `healthlab-alerts` → Create topic
 2. **4.2** ในหน้า topic → **Create subscription** · Protocol **Email** · Endpoint = อีเมลของคุณ · เปิด **Subscription filter policy** → Scope **Message attributes** → วาง:
 
 ```json
@@ -248,8 +248,8 @@ bash <(curl -sL https://raw.githubusercontent.com/haru-mishi/healthlab/main/scri
 | `healthlab-subscribe` | `app.subscribe` | 10 sec | Cognito (Part 7) | subscribe อีเมลผู้ใช้ใหม่เข้า SNS |
 | `healthlab-reminder` | `app.reminder` | 1 min | EventBridge (Part 9) | หาคนที่ผลล่าสุดผิดปกติ → เตือน |
 
-1. **5.1** ค้นหา **Lambda** → **Create function** → **Author from scratch** · Function name `healthlab-analyzer` · Runtime **Python 3.12**
-2. **5.2** **Additional settings** → เปิด **Custom execution role** → เลือก **LabRole** → Save → **Create function**
+1. **5.1** ค้นหา **Lambda** → **Create Event Function** · Function name `healthlab-analyzer` · Runtime ค่าเริ่มต้นเป็น Node.js → เปลี่ยนเป็น **Python 3.12** (อยู่ในกลุ่ม **Other supported**)
+2. **5.2** **Additional settings** → เปิด **Custom execution role** → เลือก **LabRole** → Save → **Create Event Function**
    > **ทำซ้ำ 5.1–5.2** อีก 3 ครั้ง: `healthlab-api`, `healthlab-subscribe`, `healthlab-reminder` (ชื่อต้องตรงตามนี้)
 3. **5.3** กลับไปที่ CloudShell วางคำสั่งนี้ → สคริปต์ถาม `Gemini API key (hidden):` → วาง key จาก 0.2 แล้วกด Enter (ตัวอักษรจะไม่แสดงบนจอ ถือว่าปกติ):
 
@@ -304,7 +304,7 @@ B=$(aws s3api list-buckets --query "Buckets[?starts_with(Name,'healthlab-uploads
 ## Part 8 — API Gateway: ประตูให้หน้าเว็บเรียกหลังบ้าน (10 นาที)
 
 1. **8.1** ค้นหา **API Gateway** → Create an API → **HTTP API** → Build · API name `healthlab-api` · Add integration **Lambda** → `healthlab-api` · Version 2.0 → Next
-2. **8.2** Configure routes (Integration target = healthlab-api ทุกเส้น):
+2. **8.2** หน้า Configure routes จะว่าง → กด **Add route** 4 ครั้ง ตั้ง Method, Resource path และ Integration target = `healthlab-api` ทีละเส้น:
 
 | Method | Resource path |
 |---|---|

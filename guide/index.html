@@ -189,7 +189,7 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 
   <article class="step"><div class="num">2.1</div><div class="body">
     <h3>Create bucket</h3>
-    <p>ค้นหา <b>S3</b> → <b>Create bucket</b> → General purpose · Bucket name <code>healthlab-uploads-&lt;รหัสนักศึกษา&gt;</code> (ต้องไม่ซ้ำทั้งโลก)</p>
+    <p>ค้นหา <b>S3</b> → <b>Create bucket</b> → General purpose · <b>Bucket namespace</b> ปล่อยค่าเริ่มต้น <b>Global</b> · Bucket name <code>healthlab-uploads-&lt;รหัสนักศึกษา&gt;</code> (ต้องไม่ซ้ำทั้งโลก)</p>
     <figure class="shot"><div class="frame"><img src="img/m-s3-1.jpg" alt="ตั้งชื่อ bucket" loading="lazy"><i class="hl" style="--l:3.1;--t:72.3;--w:61.5;--h:4.5"></i></div></figure>
   </div></article>
 
@@ -229,7 +229,7 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 
   <article class="step"><div class="num">4.1</div><div class="body">
     <h3>Create topic</h3>
-    <p>ค้นหา <b>Simple Notification Service</b> → Topics → <b>Create topic</b> · Type <b>Standard</b> · Name <code>healthlab-alerts</code> → <b>Create topic</b></p>
+    <p>ค้นหา <b>Simple Notification Service</b> → Topics → <b>Create topic</b> · Type <b>Standard</b> (ค่าเริ่มต้นเป็น <b>FIFO</b> ต้องเปลี่ยน — FIFO ส่งอีเมลไม่ได้) · Name <code>healthlab-alerts</code> → <b>Create topic</b></p>
     <figure class="shot"><div class="frame"><img src="img/m-sns-1.jpg" alt="Create topic Standard" loading="lazy"><i class="hl" style="--l:34;--t:31.2;--w:30.6;--h:17.4"></i><i class="hl" style="--l:3.1;--t:53.6;--w:61.5;--h:4.6"></i></div></figure>
     <p>จด <b>ARN</b> ของ topic ไว้ (ใช้ตั้งค่า Lambda)</p>
     <figure class="shot"><div class="frame"><img src="img/m-sns-2.jpg" alt="topic สร้างแล้ว" loading="lazy"><i class="hl" style="--l:43;--t:38;--w:15;--h:9"></i><i class="hl" style="--l:84.6;--t:65.2;--w:11.2;--h:4.6"></i></div></figure>
@@ -266,14 +266,14 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
   </table></div>
 
   <article class="step"><div class="num">5.1</div><div class="body">
-    <h3>Create function</h3>
-    <p>ค้นหา <b>Lambda</b> → <b>Create function</b> → <b>Author from scratch</b> · Function name <code>healthlab-analyzer</code> · Runtime <b>Python 3.12</b></p>
+    <h3>Create Event Function</h3>
+    <p>ค้นหา <b>Lambda</b> → <b>Create Event Function</b> · Function name <code>healthlab-analyzer</code> · Runtime ค่าเริ่มต้นเป็น Node.js → เปลี่ยนเป็น <b>Python 3.12</b> (อยู่ในกลุ่ม <b>Other supported</b>)</p>
     <figure class="shot"><div class="frame"><img src="img/m-lam-1.jpg" alt="Create function" loading="lazy"><i class="hl" style="--l:3.1;--t:46.4;--w:61.5;--h:4.6"></i><i class="hl" style="--l:3.1;--t:60.6;--w:58;--h:4.6"></i></div></figure>
   </div></article>
 
   <article class="step"><div class="num">5.2</div><div class="body">
     <h3>ใช้ LabRole</h3>
-    <p>เปิด <b>Additional settings</b> → เปิดสวิตช์ <b>Custom execution role</b> → เลือก <b>LabRole</b> → Save → <b>Create function</b></p>
+    <p>เปิด <b>Additional settings</b> → เปิดสวิตช์ <b>Custom execution role</b> → เลือก <b>LabRole</b> → Save → <b>Create Event Function</b></p>
     <figure class="shot"><div class="frame"><img src="img/m-lam-2.jpg" alt="เลือก LabRole" loading="lazy"><i class="hl" style="--l:3.1;--t:70.2;--w:56.4;--h:8.4"></i><i class="hl" style="--l:64.4;--t:31.4;--w:33;--h:4.6"></i></div><figcaption>Learner Lab สร้าง IAM role ใหม่ไม่ได้ ต้องใช้ LabRole ที่มีอยู่แล้วเสมอ</figcaption></figure>
     <p class="note"><b>ทำซ้ำ 5.1–5.2</b> อีก 3 ครั้ง: <code>healthlab-api</code>, <code>healthlab-subscribe</code>, <code>healthlab-reminder</code> (ชื่อต้องตรงตามนี้) · ยังไม่ต้องตั้งอะไรเพิ่ม</p>
   </div></article>
@@ -375,6 +375,7 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 
   <article class="step"><div class="num">8.2</div><div class="body">
     <h3>Configure routes — 4 เส้น</h3>
+    <p>หน้านี้จะว่าง → กด <b>Add route</b> 4 ครั้ง ตั้ง Method, Resource path และ Integration target ทีละเส้นตามตาราง</p>
     <div class="tbl"><table class="res">
       <tr><th>Method</th><th>Resource path</th><th>Integration target</th></tr>
       <tr><td>POST</td><td><code>/upload-url</code></td><td>healthlab-api</td></tr>
