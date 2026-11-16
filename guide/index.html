@@ -101,11 +101,11 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 <header class="hero">
   <div class="eyebrow">IT332 / CS446 · Group Project · Manual setup ผ่าน AWS Console</div>
   <h1>HealthLab — สร้างระบบแปลผลตรวจสุขภาพบน AWS ด้วยมือทีละบริการ</h1>
-  <p>คู่มือนี้พาสร้างทุกบริการด้วยการกดใน AWS Console เอง ตั้งค่าเอง และเชื่อมแต่ละบริการเข้าหากันเอง ทุกภาพถ่ายจากการสร้างจริงบน AWS Academy Learner Lab (15 พ.ย. 2569) ส่วนที่เป็นโค้ดมีแค่ไฟล์ Lambda (อัปโหลดเป็น .zip), JSON สั้นๆ 2 ก้อน และค่า 3 บรรทัดใน index.html คลิกภาพเพื่อขยาย</p>
+  <p>คู่มือนี้พาสร้างทุกบริการด้วยการกดใน AWS Console เอง ตั้งค่าเอง และเชื่อมแต่ละบริการเข้าหากันเอง ส่วนขั้นที่ต้องใส่ไฟล์ (หน้าเว็บ, โค้ด Lambda, ไฟล์ทดสอบ) ใช้คำสั่งบรรทัดเดียวใน CloudShell ดึงจาก GitHub แบบเดียวกับใน Lab ของวิชา ไม่ต้องดาวน์โหลดหรือแก้ไฟล์เอง ทุกภาพถ่ายจากการสร้างจริงบน AWS Academy Learner Lab คลิกภาพเพื่อขยาย</p>
   <div class="meta">
-    <div><b>เวลา</b>~90 นาที</div>
+    <div><b>เวลา</b>~60 นาที</div>
     <div><b>Region</b>us-east-1 (N. Virginia)</div>
-    <div><b>วิธีสร้าง</b>AWS Console (กดเอง)</div>
+    <div><b>วิธีสร้าง</b>Console + CloudShell 4 คำสั่ง</div>
     <div><b>ค่าใช้จ่าย</b>≈ $0 (serverless)</div>
     <div><b>ไฟล์</b><a href="https://github.com/haru-mishi/healthlab" target="_blank" rel="noopener">github.com/haru-mishi/healthlab</a></div>
   </div>
@@ -136,8 +136,8 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 <main>
 
 <section class="stage" id="p0">
-  <div class="stage-head"><span class="tag">PART 0</span><h2>เตรียมตัว</h2><span class="t">~10 นาที</span></div>
-  <p class="goal">เปิด Lab, ขอ Gemini API key และเตรียมไฟล์ 2 ไฟล์ที่ต้องอัปโหลด</p>
+  <div class="stage-head"><span class="tag">PART 0</span><h2>เตรียมตัว</h2><span class="t">~7 นาที</span></div>
+  <p class="goal">เปิด Lab, ขอ Gemini API key และเปิด CloudShell ทิ้งไว้</p>
 
   <article class="step"><div class="num">0.1</div><div class="body">
     <h3>เข้าคอร์ส Learner Lab</h3>
@@ -164,37 +164,22 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
   </div></article>
 
   <article class="step"><div class="num">0.5</div><div class="body">
-    <h3>ดาวน์โหลดไฟล์</h3>
-    <p>คลิกดาวน์โหลดลงเครื่อง (zip ทำไว้ให้แล้ว ไม่มี key อยู่ข้างใน):</p>
-    <ul>
-      <li><a href="https://github.com/haru-mishi/healthlab/raw/main/dist/lambda.zip"><b>lambda.zip</b></a> — ใช้กับ Lambda ทั้ง 4 ตัว</li>
-      <li><a href="https://github.com/haru-mishi/healthlab/raw/main/dist/web.zip"><b>web.zip</b></a> — หน้าเว็บ (ตอนนี้ยังไม่ต้องแก้อะไร จะแก้ใน Part 10)</li>
-      <li><a href="https://github.com/haru-mishi/healthlab/raw/main/web/index.html"><b>index.html</b></a> — ไว้แก้ 3 ค่าใน Part 10 แล้ว zip เอง</li>
-      <li><a href="https://github.com/haru-mishi/healthlab/raw/main/samples/blood-test.txt"><b>blood-test.txt</b></a> — ผลเลือดจำลองสำหรับทดสอบใน Part 6</li>
-    </ul>
-    <p class="note">zip เอง: Windows คลิกขวาที่ไฟล์ → Send to → Compressed (zipped) folder · Mac คลิกขวา → Compress · ไฟล์ต้องอยู่ชั้นนอกสุดของ zip ไม่ใช่อยู่ในโฟลเดอร์</p>
+    <h3>เปิด CloudShell</h3>
+    <p>กดไอคอน <b>&gt;_</b> (CloudShell) แถบบนของ Console → ครั้งแรกจะมีหน้าต่าง Welcome ให้กด <b>Close</b> → รอจนขึ้น prompt <code>~ $</code></p>
+    <p class="note">เปิดแท็บ CloudShell ทิ้งไว้ตลอด ใช้รันคำสั่งใน Part 1, 5, 6, 10 · วางคำสั่งแล้วถ้าขึ้น <i>Safe Paste</i> ให้กด <b>Paste</b> · ทุกคำสั่งดึงไฟล์จาก <a href="https://github.com/haru-mishi/healthlab" target="_blank" rel="noopener">repo</a> ไม่ต้องดาวน์โหลดอะไรลงเครื่อง</p>
   </div></article>
 </section>
 
 <section class="stage" id="p1">
-  <div class="stage-head"><span class="tag">PART 1</span><h2>Amplify — จอง URL หน้าเว็บก่อน</h2><span class="t">~3 นาที</span></div>
+  <div class="stage-head"><span class="tag">PART 1</span><h2>Amplify — จอง URL หน้าเว็บก่อน</h2><span class="t">~2 นาที</span></div>
   <p class="goal">S3 CORS, Cognito และอีเมลแจ้งเตือนต้องรู้ URL เว็บ จึงสร้าง Amplify ก่อนด้วยไฟล์ index.html ที่ยังไม่ได้ตั้งค่า</p>
 
   <article class="step"><div class="num">1.1</div><div class="body">
-    <h3>Create new app → Deploy without Git</h3>
-    <p>ค้นหา <b>Amplify</b> → <b>Create new app</b> → เลือก <b>Deploy without Git</b> → Next</p>
-    <figure class="shot"><div class="frame"><img src="img/m-amp-1.jpg" alt="Amplify เลือก Deploy without Git" loading="lazy"><i class="hl" style="--l:27;--t:58.1;--w:17;--h:6.2"></i></div></figure>
-  </div></article>
-
-  <article class="step"><div class="num">1.2</div><div class="body">
-    <h3>ตั้งชื่อ แล้วอัปโหลด web.zip</h3>
-    <p>App name <code>healthlab</code> · Branch name <code>main</code> · Method <b>Drag and drop</b> → <b>Choose .zip folder</b> เลือก <code>web.zip</code> → <b>Save and deploy</b></p>
-    <figure class="shot"><div class="frame"><img src="img/m-amp-2.jpg" alt="ฟอร์ม manual deployment" loading="lazy"><i class="hl" style="--l:27;--t:20;--w:69.6;--h:5"></i><i class="hl" style="--l:27;--t:66.7;--w:69.5;--h:12.4"></i><i class="hl" style="--l:86.5;--t:86.7;--w:10.1;--h:4.5"></i></div></figure>
-  </div></article>
-
-  <article class="step"><div class="num">1.3</div><div class="body">
-    <h3>จด URL ของเว็บ</h3>
-    <p>branch <b>main</b> ขึ้น <b>Deployed</b> และมี Domain เช่น <code>https://main.d1jtnjb19epn9r.amplifyapp.com</code> · จด URL นี้ไว้ ใช้อีกหลายที่</p>
+    <h3>Deploy หน้าเว็บด้วยคำสั่งเดียว</h3>
+    <p>วางคำสั่งนี้ใน CloudShell — สร้าง Amplify app <code>healthlab</code> branch <code>main</code> แล้ว deploy หน้าเว็บจาก GitHub (Deploy without Git)</p>
+    <div class="cmd"><pre>bash &lt;(curl -sL https://raw.githubusercontent.com/haru-mishi/healthlab/main/scripts/web.sh)</pre><button type="button">Copy</button></div>
+    <p class="ok">บรรทัดท้ายขึ้น deploy: SUCCEED และ URL: https://main.&lt;id&gt;.amplifyapp.com/ · จด URL นี้ไว้ ใช้อีกหลายที่ · เปิดดูแล้วเห็นหน้าเว็บ HealthLab (ปุ่ม login ยังใช้ไม่ได้จนถึง Part 10)</p>
+    <p>ดูใน Console ได้ที่ <b>Amplify</b> → <code>healthlab</code> → branch <b>main</b> ขึ้น <b>Deployed</b> พร้อม Domain</p>
     <figure class="shot"><div class="frame"><img src="img/m-amp-3.jpg" alt="Amplify deployed พร้อม domain" loading="lazy"><i class="hl" style="--l:25.4;--t:92;--w:22.6;--h:3.6"></i><i class="hl" style="--l:25.4;--t:83.4;--w:6.4;--h:3"></i></div></figure>
   </div></article>
 </section>
@@ -270,8 +255,8 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 </section>
 
 <section class="stage" id="p5">
-  <div class="stage-head"><span class="tag">PART 5</span><h2>Lambda ×4 — โค้ดหลังบ้าน</h2><span class="t">~20 นาที</span></div>
-  <p class="goal">สร้าง 4 function จากไฟล์ <code>lambda.zip</code> เดียวกัน ต่างกันแค่ชื่อ, Handler และ Timeout · ขั้น 5.1–5.6 แสดงตัวอย่างของ analyzer แล้วทำซ้ำกับอีก 3 ตัวตามตาราง</p>
+  <div class="stage-head"><span class="tag">PART 5</span><h2>Lambda ×4 — โค้ดหลังบ้าน</h2><span class="t">~8 นาที</span></div>
+  <p class="goal">สร้าง 4 function ใน Console (แค่ชื่อ, Runtime, Role) แล้วรันสคริปต์ครั้งเดียวใส่โค้ดและตั้งค่าที่เหลือให้ครบทั้ง 4 ตัว · ทุกตัวใช้โค้ดไฟล์เดียวกัน ต่างกันแค่ Handler และ Timeout ซึ่งสคริปต์ตั้งให้ตามตาราง</p>
   <div class="tbl"><table class="res">
     <tr><th>Function name</th><th>Handler</th><th>Timeout</th><th>ถูกเรียกโดย</th></tr>
     <tr><td><code>healthlab-analyzer</code></td><td><code>app.analyzer</code></td><td>3 min</td><td>S3 (Part 6)</td></tr>
@@ -290,40 +275,23 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
     <h3>ใช้ LabRole</h3>
     <p>เปิด <b>Additional settings</b> → เปิดสวิตช์ <b>Custom execution role</b> → เลือก <b>LabRole</b> → Save → <b>Create function</b></p>
     <figure class="shot"><div class="frame"><img src="img/m-lam-2.jpg" alt="เลือก LabRole" loading="lazy"><i class="hl" style="--l:3.1;--t:70.2;--w:56.4;--h:8.4"></i><i class="hl" style="--l:64.4;--t:31.4;--w:33;--h:4.6"></i></div><figcaption>Learner Lab สร้าง IAM role ใหม่ไม่ได้ ต้องใช้ LabRole ที่มีอยู่แล้วเสมอ</figcaption></figure>
+    <p class="note"><b>ทำซ้ำ 5.1–5.2</b> อีก 3 ครั้ง: <code>healthlab-api</code>, <code>healthlab-subscribe</code>, <code>healthlab-reminder</code> (ชื่อต้องตรงตามนี้) · ยังไม่ต้องตั้งอะไรเพิ่ม</p>
   </div></article>
 
   <article class="step"><div class="num">5.3</div><div class="body">
-    <h3>อัปโหลดโค้ด lambda.zip</h3>
-    <p>แท็บ Code → ปุ่ม <b>Update</b> (หรือ Upload from) → <b>Update from a .zip file</b> → Choose file <code>lambda.zip</code> → Update</p>
-    <figure class="shot"><div class="frame"><img src="img/m-lam-3.jpg" alt="เมนู Update from a .zip file" loading="lazy"><i class="hl" style="--l:89.1;--t:69.2;--w:6.7;--h:4.4"></i><i class="hl" style="--l:77.3;--t:73.8;--w:18.4;--h:4"></i></div></figure>
-    <figure class="shot"><div class="frame"><img src="img/m-lam-4.jpg" alt="เลือก lambda.zip" loading="lazy"><i class="hl" style="--l:21.5;--t:47;--w:37.7;--h:6"></i><i class="hl" style="--l:73;--t:67;--w:5.6;--h:4.4"></i></div></figure>
-  </div></article>
-
-  <article class="step"><div class="num">5.4</div><div class="body">
-    <h3>ตั้ง Handler</h3>
-    <p>เลื่อนลงไปที่ <b>Runtime settings</b> → Edit → Handler <code>app.analyzer</code> → Save settings</p>
-    <figure class="shot"><div class="frame"><img src="img/m-lam-5.jpg" alt="ตั้ง Handler" loading="lazy"><i class="hl" style="--l:3.1;--t:48.7;--w:62.2;--h:4.6"></i></div><figcaption>รูปแบบคือ <code>ชื่อไฟล์.ชื่อฟังก์ชัน</code> · ถ้าไม่แก้ Lambda จะหา <code>lambda_function.lambda_handler</code> ซึ่งไม่มี</figcaption></figure>
-  </div></article>
-
-  <article class="step"><div class="num">5.5</div><div class="body">
-    <h3>Memory และ Timeout</h3>
-    <p>แท็บ <b>Configuration</b> → General configuration → Edit · Memory <code>256</code> MB · Timeout ตามตาราง (analyzer = 3 min 0 sec เผื่อ retry ตอน Gemini คิวเต็ม) → Save</p>
-    <figure class="shot"><div class="frame"><img src="img/m-lam-6.jpg" alt="Memory และ Timeout" loading="lazy"><i class="hl" style="--l:3.1;--t:40.7;--w:13.3;--h:4.6"></i><i class="hl" style="--l:3.1;--t:87.2;--w:16.4;--h:4.6"></i></div><figcaption>ค่าเริ่มต้น 3 วินาทีไม่พอ เพราะ Gemini ใช้เวลาวิเคราะห์ ~10–15 วินาที</figcaption></figure>
-  </div></article>
-
-  <article class="step"><div class="num">5.6</div><div class="body">
-    <h3>Environment variables</h3>
-    <p>Configuration → <b>Environment variables</b> → Edit → Add environment variable ทีละตัว → Save</p>
+    <h3>ใส่โค้ดและตั้งค่าทั้ง 4 ตัวด้วยคำสั่งเดียว</h3>
+    <p>กลับไปที่ CloudShell วางคำสั่งนี้ → สคริปต์ถาม <code>Gemini API key (hidden):</code> → วาง key จากขั้น 0.4 แล้วกด Enter (ตัวอักษรจะไม่แสดงบนจอ ถือว่าปกติ)</p>
+    <div class="cmd"><pre>bash &lt;(curl -sL https://raw.githubusercontent.com/haru-mishi/healthlab/main/scripts/lambda.sh)</pre><button type="button">Copy</button></div>
+    <p class="ok">ขึ้น OK healthlab-… handler=app.… timeout=…s ครบ 4 บรรทัด</p>
+    <p>สคริปต์ทำสิ่งที่ปกติต้องกดใน Console ทีละตัว ×4 (<a href="https://github.com/haru-mishi/healthlab/blob/main/scripts/lambda.sh" target="_blank" rel="noopener">ดูโค้ด</a>) — เปิด function ใดก็ได้เพื่อดูผล:</p>
     <div class="tbl"><table class="res">
-      <tr><th>Key</th><th>Value (ตัวอย่าง ใช้ของคุณ)</th></tr>
-      <tr><td><code>TABLE</code></td><td><code>HealthReports</code></td></tr>
-      <tr><td><code>BUCKET</code></td><td><code>healthlab-uploads-&lt;รหัส&gt;</code></td></tr>
-      <tr><td><code>TOPIC_ARN</code></td><td>ARN ของ topic จากขั้น 4.1</td></tr>
-      <tr><td><code>APP_URL</code></td><td>URL จากขั้น 1.3 <b>มี / ท้าย</b></td></tr>
-      <tr><td><code>GEMINI_API_KEY</code></td><td>key จากขั้น 0.4 (ต้องใส่ใน analyzer และ api)</td></tr>
+      <tr><th>ใน Console</th><th>ค่าที่สคริปต์ตั้ง</th></tr>
+      <tr><td>Code</td><td>อัปโหลด <code>lambda.zip</code> (มี <code>app.py</code> ไฟล์เดียว)</td></tr>
+      <tr><td>Runtime settings → Handler</td><td><code>app.&lt;ชื่อ&gt;</code> เช่น <code>app.analyzer</code> (ค่าเริ่มต้น <code>lambda_function.lambda_handler</code> ใช้ไม่ได้)</td></tr>
+      <tr><td>Configuration → General</td><td>Memory 256 MB · Timeout ตามตาราง (ค่าเริ่มต้น 3 วินาทีไม่พอ Gemini ใช้ ~10–40 วินาที)</td></tr>
+      <tr><td>Configuration → Environment variables</td><td><code>TABLE</code>, <code>BUCKET</code>, <code>TOPIC_ARN</code>, <code>APP_URL</code>, <code>GEMINI_API_KEY</code> (หา bucket, topic, URL จากชื่อให้เอง)</td></tr>
     </table></div>
-    <figure class="shot"><div class="frame"><img src="img/m-lam-7.jpg" alt="Environment variables 5 ตัว" loading="lazy"><i class="hl" style="--l:3.1;--t:41;--w:69.4;--h:27.8"></i></div><figcaption>ในภาพใส่ค่าตัวอย่างแทน key จริง ให้วาง key ของคุณเอง · อย่าเปิดหน้านี้ตอนแชร์จอ</figcaption></figure>
-    <p class="note"><b>ทำซ้ำ 5.1–5.6</b> สำหรับ <code>healthlab-api</code>, <code>healthlab-subscribe</code>, <code>healthlab-reminder</code> โดยเปลี่ยนชื่อ, Handler และ Timeout ตามตารางด้านบน ส่วน Environment variables ใส่ชุดเดียวกันทุกตัว</p>
+    <figure class="shot"><div class="frame"><img src="img/m-lam-7.jpg" alt="Environment variables 5 ตัว" loading="lazy"></div><figcaption>Environment variables ที่สคริปต์ตั้งให้ (ภาพนี้ใช้ค่าตัวอย่างแทน key จริง) · อย่าเปิดหน้านี้ตอนแชร์จอ</figcaption></figure>
   </div></article>
 </section>
 
@@ -341,9 +309,10 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
   </div></article>
 
   <article class="step"><div class="num">6.2</div><div class="body">
-    <h3>ทดสอบ: อัปโหลดผลเลือดจำลองเข้า S3 เอง</h3>
-    <p>S3 → bucket → <b>Create folder</b> <code>uploads</code> → เข้าไปสร้างโฟลเดอร์ <code>test-user</code> → <b>Upload</b> → Add files <code>samples/blood-test.txt</code> → Upload</p>
-    <figure class="shot"><div class="frame"><img src="img/m-test-upload.jpg" alt="อัปโหลดไฟล์ไปที่ uploads/test-user/" loading="lazy"><i class="hl" style="--l:3.1;--t:57.9;--w:92.8;--h:4.4"></i><i class="hl" style="--l:3.1;--t:74.8;--w:27;--h:3.6"></i></div></figure>
+    <h3>ทดสอบ: ใส่ผลเลือดจำลองเข้า S3</h3>
+    <p>วางคำสั่งนี้ใน CloudShell — ดึงผลเลือดจำลองจาก GitHub ใส่ bucket ที่ <code>uploads/test-user/blood-test.txt</code></p>
+    <div class="cmd"><pre>B=$(aws s3api list-buckets --query "Buckets[?starts_with(Name,'healthlab-uploads-')].Name | [0]" --output text); curl -sL https://raw.githubusercontent.com/haru-mishi/healthlab/main/samples/blood-test.txt | aws s3 cp - s3://$B/uploads/test-user/blood-test.txt --content-type text/plain</pre><button type="button">Copy</button></div>
+    <p class="note">ไม่มีข้อความตอบกลับ = สำเร็จ · ดูใน S3 → bucket → uploads/ → test-user/ จะเห็น blood-test.txt</p>
   </div></article>
 
   <article class="step"><div class="num">6.3</div><div class="body">
@@ -361,7 +330,7 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 
   <article class="step"><div class="num">7.1</div><div class="body">
     <h3>สร้าง User pool สำหรับ Single-page application</h3>
-    <p>ค้นหา <b>Cognito</b> → <b>Create user pool</b> · Application type <b>Single-page application (SPA)</b> · Name <code>healthlab-web</code> · Sign-in identifiers ติ๊ก <b>Email</b> · Self-registration เปิด</p>
+    <p>ค้นหา <b>Cognito</b> → <b>Create user pool</b> · Application type <b>Single-page application (SPA)</b> · Name <code>healthlab-web</code> (ลบชื่อเริ่มต้น <code>My SPA app - …</code> ออกให้หมดก่อน เพราะสคริปต์ Part 10 หา app client จากชื่อนี้) · Sign-in identifiers ติ๊ก <b>Email</b> · Self-registration เปิด</p>
     <figure class="shot"><div class="frame"><img src="img/m-cog-1.jpg" alt="Cognito ตั้งค่า SPA" loading="lazy"><i class="hl" style="--l:26.4;--t:12.4;--w:22.9;--h:12"></i><i class="hl" style="--l:3.1;--t:29.8;--w:92.6;--h:4.8"></i><i class="hl" style="--l:2.8;--t:59.6;--w:6;--h:3.4"></i></div></figure>
     <p>Required attributes <b>email</b> · Return URL = URL จากขั้น 1.3 <b>มี / ท้าย</b> → <b>Create user directory</b></p>
     <figure class="shot"><div class="frame"><img src="img/m-cog-2.jpg" alt="required attribute และ return URL" loading="lazy"><i class="hl" style="--l:3.1;--t:46.8;--w:15.7;--h:6"></i><i class="hl" style="--l:3.1;--t:77;--w:92.6;--h:4.8"></i></div></figure>
@@ -381,10 +350,10 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
   </div></article>
 
   <article class="step"><div class="num">7.4</div><div class="body">
-    <h3>จด Client ID และ Cognito domain</h3>
+    <h3>จด Client ID และตรวจ Login pages</h3>
     <p>เมนู <b>App clients</b> → <code>healthlab-web</code> → จด <b>Client ID</b></p>
     <figure class="shot"><div class="frame"><img src="img/m-cog-client.jpg" alt="Client ID" loading="lazy"><i class="hl" style="--l:23.5;--t:36.6;--w:16.4;--h:5.6"></i></div></figure>
-    <p>แท็บ <b>Login pages</b> ตรวจว่า Allowed callback URL เป็น URL เว็บ และ scopes มี <b>email</b>, <b>openid</b> · Cognito domain ดูได้ที่เมนู <b>Domain</b> (รูปแบบ <code>https://&lt;prefix&gt;.auth.us-east-1.amazoncognito.com</code>)</p>
+    <p>แท็บ <b>Login pages</b> ตรวจว่า Allowed callback URL เป็น URL เว็บ และ scopes มี <b>email</b>, <b>openid</b> (Cognito domain ไม่ต้องจด สคริปต์ Part 10 หาให้เอง)</p>
     <figure class="shot"><div class="frame"><img src="img/m-cog-login.jpg" alt="Login pages callback และ scopes" loading="lazy"><i class="hl" style="--l:23.5;--t:32.6;--w:20.4;--h:5.8"></i><i class="hl" style="--l:61;--t:41;--w:11.2;--h:11.8"></i></div></figure>
   </div></article>
 
@@ -463,22 +432,14 @@ footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);paddin
 </section>
 
 <section class="stage" id="p10">
-  <div class="stage-head"><span class="tag">PART 10</span><h2>หน้าเว็บ — ใส่ค่าแล้ว deploy ใหม่</h2><span class="t">~5 นาที</span></div>
+  <div class="stage-head"><span class="tag">PART 10</span><h2>หน้าเว็บ — ใส่ค่าแล้ว deploy ใหม่</h2><span class="t">~2 นาที</span></div>
 
   <article class="step"><div class="num">10.1</div><div class="body">
-    <h3>แก้ 3 บรรทัดใน web/index.html</h3>
-    <p>เปิดไฟล์ด้วย Notepad / VS Code ค้นหา <code>const CFG</code> แล้วแทนค่าด้วยของคุณ</p>
-    <div class="cmd"><pre>  apiUrl: 'https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com',
-  cognitoDomain: 'https://us-east-1xxxxxxxx.auth.us-east-1.amazoncognito.com',
-  clientId: 'xxxxxxxxxxxxxxxxxxxxxxxxxx',</pre><button type="button">Copy</button></div>
-    <ul><li><b>apiUrl</b> = Invoke URL จาก 8.2 (ไม่มี / ท้าย)</li><li><b>cognitoDomain</b> = domain จาก 7.4</li><li><b>clientId</b> = Client ID จาก 7.4</li></ul>
-    <p>บันทึก แล้ว zip ไฟล์ index.html ใหม่เป็น <code>web.zip</code></p>
-  </div></article>
-
-  <article class="step"><div class="num">10.2</div><div class="body">
-    <h3>Amplify → Deploy updates</h3>
-    <p>Amplify → healthlab → branch main → <b>Deploy updates</b> → Drag and drop zip ใหม่ → <b>Save and deploy</b></p>
-    <figure class="shot"><div class="frame"><img src="img/m-amp-upd.jpg" alt="Deploy updates" loading="lazy"><i class="hl" style="--l:27;--t:64.2;--w:69.6;--h:14"></i><i class="hl" style="--l:86.3;--t:85.5;--w:10.5;--h:5.2"></i></div></figure>
+    <h3>รันคำสั่งเดิมจาก Part 1 อีกครั้ง</h3>
+    <p>คราวนี้สคริปต์เจอ API <code>healthlab-api</code> และ app client <code>healthlab-web</code> แล้ว จึงเติม 3 ค่าใน index.html (<code>apiUrl</code>, <code>cognitoDomain</code>, <code>clientId</code>) ให้เองแล้ว deploy ใหม่</p>
+    <div class="cmd"><pre>bash &lt;(curl -sL https://raw.githubusercontent.com/haru-mishi/healthlab/main/scripts/web.sh)</pre><button type="button">Copy</button></div>
+    <p class="ok">ขึ้น 3 บรรทัด apiUrl: / cognitoDomain: / clientId: ตามด้วย deploy: SUCCEED</p>
+    <p class="note">ถ้าขึ้น <code>not found yet: deploying with placeholders</code> แปลว่าชื่อ API หรือ app client ไม่ตรง (ดูขั้น 7.1 และ 8.1) แก้ชื่อแล้วรันใหม่ได้เลย</p>
   </div></article>
 
   <article class="step"><div class="num">10.3</div><div class="body">
