@@ -54,7 +54,7 @@ if [ "$POOL" != None ]; then
   aws cognito-idp update-user-pool --user-pool-id "$POOL" --deletion-protection INACTIVE
   aws cognito-idp delete-user-pool --user-pool-id "$POOL"
 fi
-for f in $FNS; do step "Lambda $f"; aws lambda delete-function --function-name "$f"; done
+for f in $FNS; do step "Lambda $f"; aws lambda delete-function --function-name "$f" > /dev/null; done
 if [ "$LOGS" != None ]; then
   for g in $LOGS; do step "Log group $g"; aws logs delete-log-group --log-group-name "$g"; done
 fi
