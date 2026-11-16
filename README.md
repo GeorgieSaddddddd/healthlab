@@ -172,7 +172,7 @@ healthlab/
 ### 0.3 เปิด CloudShell
 กดไอคอน **`>_`** (CloudShell) แถบบนของ Console → ครั้งแรกจะมีหน้าต่าง Welcome ให้กด **Close** → รอจนขึ้น prompt `~ $`
 
-> เปิดแท็บ CloudShell ทิ้งไว้ตลอด ใช้รันคำสั่งใน Part 1, 5, 6, 10 · วางคำสั่งแล้วถ้าขึ้น *Safe Paste* ให้กด **Paste** · ทุกคำสั่งดึงไฟล์จาก [repo นี้](https://github.com/haru-mishi/healthlab) ไม่ต้องดาวน์โหลดอะไรลงเครื่อง
+> เปิดแท็บ CloudShell ทิ้งไว้ตลอด ใช้รันคำสั่งใน Part 1, 5, 6, 10, 12 · วางคำสั่งแล้วถ้าขึ้น *Safe Paste* ให้กด **Paste** · ทุกคำสั่งดึงไฟล์จาก [repo นี้](https://github.com/haru-mishi/healthlab) ไม่ต้องดาวน์โหลดอะไรลงเครื่อง
 
 ---
 
