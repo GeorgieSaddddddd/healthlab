@@ -122,7 +122,8 @@ healthlab/
 │   └── index.html         ← หน้าเว็บไฟล์เดียว (มี placeholder 3 ค่า ซึ่ง web.sh เติมให้)
 ├── scripts/
 │   ├── web.sh             ← Part 1 + 10: deploy หน้าเว็บเข้า Amplify (เติม 3 ค่าให้อัตโนมัติ)
-│   └── lambda.sh          ← Part 5: ใส่โค้ด + Handler + Timeout + env vars ให้ Lambda ทั้ง 4 ตัว
+│   ├── lambda.sh          ← Part 5: ใส่โค้ด + Handler + Timeout + env vars ให้ Lambda ทั้ง 4 ตัว
+│   └── cleanup.sh         ← Part 12: ลบทุกอย่างในคำสั่งเดียว
 ├── dist/                  ← lambda.zip, web.zip สำเร็จรูป (สคริปต์ดึงไปใช้)
 ├── samples/
 │   └── blood-test.txt     ← ผลเลือดจำลองสำหรับทดสอบ
@@ -421,7 +422,15 @@ python3 test_app.py
 
 ## Part 12 — ลบทุกอย่าง
 
-ลบตามลำดับนี้ใน Console (ย้อนจากตอนสร้าง):
+รันใน CloudShell คำสั่งเดียว ([ดูโค้ด](scripts/cleanup.sh)) — สคริปต์หา resource ทุกตัวจากชื่อในตาราง แสดงรายการให้ดูก่อน พิมพ์ `yes` แล้วจึงลบ (ย้อนลำดับจากตอนสร้าง):
+
+```bash
+bash <(curl -sL https://raw.githubusercontent.com/haru-mishi/healthlab/main/scripts/cleanup.sh)
+```
+
+ได้ผล: ขึ้น `- EventBridge …` `- API Gateway …` ไล่ไปจนถึง `- Amplify …` แล้วจบด้วย `Done.` → **รันซ้ำอีกครั้ง** ต้องขึ้น `Nothing left to delete` (ตัวที่ลบไปแล้วจะข้าม รันกี่ครั้งก็ได้) → แล้วทำข้อ 9 ด้านล่าง
+
+ถ้าอยากลบเองใน Console ให้ทำตามลำดับนี้ (สคริปต์ทำข้อ 1–8 ให้แบบเดียวกัน):
 
 1. **EventBridge** → Scheduled rules → `healthlab-daily-reminder` → Delete
 2. **API Gateway** → `healthlab-api` → Delete

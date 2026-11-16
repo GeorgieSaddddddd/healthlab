@@ -498,7 +498,10 @@ curl -s -H "Authorization: Bearer $TOKEN" $API_URL/reports/$RID | jq -c '{status
 <section class="stage" id="p12">
   <div class="stage-head"><span class="tag">PART 12</span><h2>ลบทุกอย่างหลังส่งงาน</h2></div>
   <article class="step"><div class="num">X</div><div class="body">
-    <p>ลบตามลำดับนี้ใน Console (ย้อนกลับจากตอนสร้าง):</p>
+    <p>รันใน CloudShell คำสั่งเดียว (<a href="https://github.com/haru-mishi/healthlab/blob/main/scripts/cleanup.sh" target="_blank" rel="noopener">ดูโค้ด</a>) — สคริปต์หา resource ทุกตัวจากชื่อ แสดงรายการให้ดูก่อน พิมพ์ <code>yes</code> แล้วจึงลบ:</p>
+    <div class="cmd"><pre>bash &lt;(curl -sL https://raw.githubusercontent.com/haru-mishi/healthlab/main/scripts/cleanup.sh)</pre><button type="button">Copy</button></div>
+    <p class="ok">ขึ้น - EventBridge … ไล่ไปจนถึง - Amplify … แล้วจบด้วย Done. · รันซ้ำอีกครั้งต้องขึ้น Nothing left to delete · แล้วลบ Gemini key ที่ AI Studio และกด <b>End Lab</b></p>
+    <p class="note">ถ้าอยากลบเองใน Console ทำตามลำดับนี้ (ย้อนกลับจากตอนสร้าง — สคริปต์ทำข้อ 1–8 ให้แบบเดียวกัน):</p>
     <ol>
       <li><b>EventBridge</b> → Scheduled rules → healthlab-daily-reminder → Delete</li>
       <li><b>API Gateway</b> → healthlab-api → Delete</li>
