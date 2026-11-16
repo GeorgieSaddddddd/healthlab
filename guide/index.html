@@ -1,0 +1,575 @@
+<title>HealthLab Build Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: lab-requisition style — sticky part index on the left, numbered step slips with screenshot + setting values on the right */
+:root{
+  --bg:#f3f6f5; --paper:#ffffff; --ink:#14201d; --muted:#5b6b67; --line:#d5dfdc;
+  --accent:#0f766e; --accent-soft:#e0f0ed; --mark:#e11d48; --ok:#15803d; --ok-soft:#e7f5ec;
+  --warn:#b45309; --warn-soft:#fdf2e3; --code-bg:#0f1b2a; --code-fg:#e3edf5;
+  --f-body:"IBM Plex Sans Thai",system-ui,"Segoe UI",Tahoma,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1514; --paper:#142120; --ink:#e4eeeb; --muted:#93a6a1; --line:#29403c;
+  --accent:#4fd1c0; --accent-soft:#16332f; --mark:#fb4d72; --ok:#4ade80; --ok-soft:#14301f;
+  --warn:#f5b04f; --warn-soft:#33270f; --code-bg:#08111c; --code-fg:#e3edf5; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1514; --paper:#142120; --ink:#e4eeeb; --muted:#93a6a1; --line:#29403c;
+  --accent:#4fd1c0; --accent-soft:#16332f; --mark:#fb4d72; --ok:#4ade80; --ok-soft:#14301f;
+  --warn:#f5b04f; --warn-soft:#33270f; --code-bg:#08111c; --code-fg:#e3edf5; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.7 var(--f-body);margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding-block:32px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{text-wrap:balance;line-height:1.3;margin:0}
+code{font-family:var(--f-mono);font-size:.88em;background:var(--accent-soft);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+a{color:var(--accent)}
+
+.hero{display:grid;gap:20px;padding-bottom:28px;border-bottom:2px solid var(--ink);margin-bottom:28px}
+.eyebrow{font:600 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.hero h1{font-size:clamp(28px,4.4vw,46px);font-weight:700}
+.hero p{margin:0;max-width:70ch;color:var(--muted)}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.meta div{background:var(--paper);padding:10px 14px}
+.meta b{display:block;font:600 11px/1.4 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.flow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:500 13px/1 var(--f-mono)}
+.flow span{border:1px solid var(--line);background:var(--paper);padding:6px 9px;border-radius:999px}
+.flow i{font-style:normal;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;color:var(--muted)}
+.legend .sw{display:inline-block;width:18px;height:12px;border:2.5px solid var(--mark);border-radius:3px;vertical-align:-1px;margin-right:6px}
+
+.grid{display:grid;grid-template-columns:220px minmax(0,1fr);gap:36px;align-items:start}
+nav.toc{position:sticky;top:calc(16px + env(safe-area-inset-top,0px));font-size:14px;display:grid;gap:2px}
+nav.toc b{font:600 11px/1 var(--f-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+nav.toc a{color:var(--ink);text-decoration:none;padding:5px 10px;border-left:2px solid var(--line)}
+nav.toc a:hover,nav.toc a:focus-visible{border-left-color:var(--accent);color:var(--accent);outline:none}
+@media (max-width:880px){
+  .grid{grid-template-columns:minmax(0,1fr)}
+  nav.toc{position:static;display:flex;flex-wrap:wrap;gap:6px}
+  nav.toc b{width:100%;margin:0}
+  nav.toc a{border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:var(--paper)}
+}
+
+.stage{margin-bottom:56px;scroll-margin-top:16px}
+.stage-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.stage-head .tag{font:600 13px/1 var(--f-mono);color:#fff;background:var(--accent);padding:6px 10px;border-radius:6px}
+:root[data-theme="dark"] .stage-head .tag{color:var(--bg)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .stage-head .tag{color:var(--bg)}}
+.stage-head h2{font-size:clamp(22px,2.6vw,28px)}
+.stage-head .t{font:13px/1 var(--f-mono);color:var(--muted)}
+.goal{color:var(--muted);margin:8px 0 18px;max-width:72ch}
+table.res{width:100%;border-collapse:collapse;font-size:14px;margin:0;background:var(--paper)}
+table.res td,table.res th{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
+table.res th{font:600 12px/1.4 var(--f-mono);color:var(--muted);background:var(--bg)}
+table.res td:first-child{white-space:nowrap}
+.tbl{overflow-x:auto;margin:0 0 4px}
+
+.step{display:grid;grid-template-columns:56px minmax(0,1fr);gap:16px;padding:22px 0;border-top:1px dashed var(--line);scroll-margin-top:16px}
+.step:first-of-type{border-top:0}
+.num{font:600 15px/1 var(--f-mono);color:var(--accent);border:1.5px solid var(--accent);border-radius:8px;height:40px;display:grid;place-items:center}
+.body{display:grid;gap:12px;min-width:0}
+.body h3{font-size:19px;font-weight:600}
+.body p{margin:0;max-width:72ch}
+.body ol,.body ul{margin:0;padding-left:22px;max-width:72ch}
+@media (max-width:560px){.step{grid-template-columns:minmax(0,1fr)}.num{width:56px;height:32px}}
+
+.cmd{position:relative;background:var(--code-bg);color:var(--code-fg);border-radius:8px;min-width:0}
+.cmd pre{margin:0;padding:14px 16px;padding-right:76px;overflow-x:auto;font:13.5px/1.6 var(--f-mono);white-space:pre}
+.cmd button{position:absolute;top:8px;right:8px;font:600 12px/1 var(--f-mono);color:var(--code-fg);background:#ffffff1a;border:1px solid #ffffff33;border-radius:6px;padding:7px 10px;cursor:pointer}
+.cmd button:hover,.cmd button:focus-visible{background:#ffffff33;outline:none}
+
+.ok{background:var(--ok-soft);border-left:3px solid var(--ok);padding:8px 12px;border-radius:0 6px 6px 0;font-size:15px}
+.ok::before{content:"ผลที่ต้องเห็น  ";font:600 11px/1 var(--f-mono);letter-spacing:.08em;color:var(--ok)}
+.note{background:var(--warn-soft);border-left:3px solid var(--warn);padding:8px 12px;border-radius:0 6px 6px 0;font-size:15px}
+
+figure.shot{margin:0;display:grid;gap:6px}
+.frame{position:relative;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--paper);cursor:zoom-in;line-height:0}
+.frame img{display:block;width:100%;height:auto}
+.hl{position:absolute;left:calc(var(--l)*1%);top:calc(var(--t)*1%);width:calc(var(--w)*1%);height:calc(var(--h)*1%);border:3px solid var(--mark);border-radius:6px;box-shadow:0 0 0 3px color-mix(in srgb,var(--mark) 22%,transparent);pointer-events:none}
+figcaption{font-size:13px;color:var(--muted)}
+
+dialog{border:0;padding:0;background:transparent;max-width:96vw;max-height:94vh}
+dialog::backdrop{background:#000c}
+dialog img{display:block;max-width:96vw;max-height:94vh;width:auto;height:auto;border-radius:6px}
+@media (prefers-reduced-motion:no-preference){.frame img{transition:filter .15s}.frame:hover img{filter:brightness(1.03)}}
+footer{color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:16px}
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">IT332 / CS446 · Group Project · Manual setup ผ่าน AWS Console</div>
+  <h1>HealthLab — สร้างระบบแปลผลตรวจสุขภาพบน AWS ด้วยมือทีละบริการ</h1>
+  <p>คู่มือนี้พาสร้างทุกบริการด้วยการกดใน AWS Console เอง ตั้งค่าเอง และเชื่อมแต่ละบริการเข้าหากันเอง ทุกภาพถ่ายจากการสร้างจริงบน AWS Academy Learner Lab (15 พ.ย. 2569) ส่วนที่เป็นโค้ดมีแค่ไฟล์ Lambda (อัปโหลดเป็น .zip), JSON สั้นๆ 2 ก้อน และค่า 3 บรรทัดใน index.html คลิกภาพเพื่อขยาย</p>
+  <div class="meta">
+    <div><b>เวลา</b>~90 นาที</div>
+    <div><b>Region</b>us-east-1 (N. Virginia)</div>
+    <div><b>วิธีสร้าง</b>AWS Console (กดเอง)</div>
+    <div><b>ค่าใช้จ่าย</b>≈ $0 (serverless)</div>
+    <div><b>ไฟล์</b><a href="https://github.com/haru-mishi/healthlab" target="_blank" rel="noopener">github.com/haru-mishi/healthlab</a></div>
+  </div>
+  <div class="flow" aria-label="ลำดับการสร้าง">
+    <span>Amplify</span><i>→</i><span>S3</span><i>→</i><span>DynamoDB</span><i>→</i><span>SNS</span><i>→</i><span>Lambda ×4</span><i>→</i><span>S3 trigger</span><i>→</i><span>Cognito</span><i>→</i><span>API Gateway</span><i>→</i><span>EventBridge</span><i>→</i><span>หน้าเว็บ</span>
+  </div>
+  <div class="legend"><span><span class="sw"></span>กรอบแดง = จุดที่ต้องกด/กรอก</span><span>ในภาพใช้ account ID <code>693340744001</code> เป็นส่วนท้ายชื่อ bucket ให้เปลี่ยนเป็นรหัสนักศึกษาของคุณ</span></div>
+</header>
+
+<div class="grid">
+<nav class="toc" aria-label="สารบัญ">
+  <b>สารบัญ</b>
+  <a href="#p0">0 · เตรียมตัว</a>
+  <a href="#p1">1 · Amplify (จอง URL)</a>
+  <a href="#p2">2 · S3</a>
+  <a href="#p3">3 · DynamoDB</a>
+  <a href="#p4">4 · SNS</a>
+  <a href="#p5">5 · Lambda ×4</a>
+  <a href="#p6">6 · เชื่อม S3 → Lambda</a>
+  <a href="#p7">7 · Cognito</a>
+  <a href="#p8">8 · API Gateway</a>
+  <a href="#p9">9 · EventBridge</a>
+  <a href="#p10">10 · หน้าเว็บ</a>
+  <a href="#p11">11 · ทดสอบ API</a>
+  <a href="#p12">12 · ลบทุกอย่าง</a>
+</nav>
+
+<main>
+
+<section class="stage" id="p0">
+  <div class="stage-head"><span class="tag">PART 0</span><h2>เตรียมตัว</h2><span class="t">~10 นาที</span></div>
+  <p class="goal">เปิด Lab, ขอ Gemini API key และเตรียมไฟล์ 2 ไฟล์ที่ต้องอัปโหลด</p>
+
+  <article class="step"><div class="num">0.1</div><div class="body">
+    <h3>เข้าคอร์ส Learner Lab</h3>
+    <p>AWS Academy → <b>Courses</b> → <b>AWS Academy Learner Lab</b></p>
+    <figure class="shot"><div class="frame"><img src="img/academy-courses.jpg" alt="หน้า All Courses" loading="lazy"><i class="hl" style="--l:19.4;--t:48.4;--w:20.4;--h:4.2"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">0.2</div><div class="body">
+    <h3>Modules → Launch AWS Academy Learner Lab</h3>
+    <figure class="shot"><div class="frame"><img src="img/academy-modules.jpg" alt="หน้า Modules" loading="lazy"><i class="hl" style="--l:24.4;--t:46;--w:22;--h:5"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">0.3</div><div class="body">
+    <h3>Start Lab แล้วรอจุดเขียว จากนั้นกด AWS</h3>
+    <figure class="shot"><div class="frame"><img src="img/learner-lab.jpg" alt="หน้า Learner Lab" loading="lazy"><i class="hl" style="--l:62.8;--t:10.2;--w:6;--h:3.6"></i><i class="hl" style="--l:26.2;--t:10.2;--w:3.8;--h:3.6"></i></div><figcaption>ภาพนี้คือก่อนกด Start Lab (จุดแดง) · session อยู่ได้ ~4 ชม. resource ที่สร้างไว้ไม่หาย</figcaption></figure>
+    <p>ใน AWS Console มุมขวาบนต้องเป็น <b>United States (N. Virginia)</b> · ช่องค้นหาด้านบนใช้พิมพ์ชื่อบริการ (S3, Lambda ฯลฯ) เพื่อเข้าแต่ละหน้า</p>
+    <figure class="shot"><div class="frame"><img src="img/console-header.jpg" alt="แถบบนของ AWS Console" loading="lazy"><i class="hl" style="--l:63.4;--t:1.6;--w:12.8;--h:4.4"></i><i class="hl" style="--l:8.2;--t:1.6;--w:39.5;--h:4.4"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">0.4</div><div class="body">
+    <h3>สร้าง Gemini API key</h3>
+    <p>เปิด <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a> → <b>Create API key</b> → Copy key (ขึ้นต้น <code>AIza</code>) เก็บไว้ใช้ตอนตั้งค่า Lambda</p>
+    <figure class="shot"><div class="frame"><img src="img/aistudio.jpg" alt="Google AI Studio API Keys" loading="lazy"><i class="hl" style="--l:83.3;--t:5.8;--w:11.2;--h:4.8"></i></div><figcaption>ในภาพปิดบัง key ไว้ · ห้ามแชร์ key และใช้ผลตรวจจำลองเท่านั้น</figcaption></figure>
+  </div></article>
+
+  <article class="step"><div class="num">0.5</div><div class="body">
+    <h3>ดาวน์โหลดไฟล์</h3>
+    <p>คลิกดาวน์โหลดลงเครื่อง (zip ทำไว้ให้แล้ว ไม่มี key อยู่ข้างใน):</p>
+    <ul>
+      <li><a href="https://github.com/haru-mishi/healthlab/raw/main/dist/lambda.zip"><b>lambda.zip</b></a> — ใช้กับ Lambda ทั้ง 4 ตัว</li>
+      <li><a href="https://github.com/haru-mishi/healthlab/raw/main/dist/web.zip"><b>web.zip</b></a> — หน้าเว็บ (ตอนนี้ยังไม่ต้องแก้อะไร จะแก้ใน Part 10)</li>
+      <li><a href="https://github.com/haru-mishi/healthlab/raw/main/web/index.html"><b>index.html</b></a> — ไว้แก้ 3 ค่าใน Part 10 แล้ว zip เอง</li>
+      <li><a href="https://github.com/haru-mishi/healthlab/raw/main/samples/blood-test.txt"><b>blood-test.txt</b></a> — ผลเลือดจำลองสำหรับทดสอบใน Part 6</li>
+    </ul>
+    <p class="note">zip เอง: Windows คลิกขวาที่ไฟล์ → Send to → Compressed (zipped) folder · Mac คลิกขวา → Compress · ไฟล์ต้องอยู่ชั้นนอกสุดของ zip ไม่ใช่อยู่ในโฟลเดอร์</p>
+  </div></article>
+</section>
+
+<section class="stage" id="p1">
+  <div class="stage-head"><span class="tag">PART 1</span><h2>Amplify — จอง URL หน้าเว็บก่อน</h2><span class="t">~3 นาที</span></div>
+  <p class="goal">S3 CORS, Cognito และอีเมลแจ้งเตือนต้องรู้ URL เว็บ จึงสร้าง Amplify ก่อนด้วยไฟล์ index.html ที่ยังไม่ได้ตั้งค่า</p>
+
+  <article class="step"><div class="num">1.1</div><div class="body">
+    <h3>Create new app → Deploy without Git</h3>
+    <p>ค้นหา <b>Amplify</b> → <b>Create new app</b> → เลือก <b>Deploy without Git</b> → Next</p>
+    <figure class="shot"><div class="frame"><img src="img/m-amp-1.jpg" alt="Amplify เลือก Deploy without Git" loading="lazy"><i class="hl" style="--l:27;--t:58.1;--w:17;--h:6.2"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">1.2</div><div class="body">
+    <h3>ตั้งชื่อ แล้วอัปโหลด web.zip</h3>
+    <p>App name <code>healthlab</code> · Branch name <code>main</code> · Method <b>Drag and drop</b> → <b>Choose .zip folder</b> เลือก <code>web.zip</code> → <b>Save and deploy</b></p>
+    <figure class="shot"><div class="frame"><img src="img/m-amp-2.jpg" alt="ฟอร์ม manual deployment" loading="lazy"><i class="hl" style="--l:27;--t:20;--w:69.6;--h:5"></i><i class="hl" style="--l:27;--t:66.7;--w:69.5;--h:12.4"></i><i class="hl" style="--l:86.5;--t:86.7;--w:10.1;--h:4.5"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">1.3</div><div class="body">
+    <h3>จด URL ของเว็บ</h3>
+    <p>branch <b>main</b> ขึ้น <b>Deployed</b> และมี Domain เช่น <code>https://main.d1jtnjb19epn9r.amplifyapp.com</code> · จด URL นี้ไว้ ใช้อีกหลายที่</p>
+    <figure class="shot"><div class="frame"><img src="img/m-amp-3.jpg" alt="Amplify deployed พร้อม domain" loading="lazy"><i class="hl" style="--l:25.4;--t:92;--w:22.6;--h:3.6"></i><i class="hl" style="--l:25.4;--t:83.4;--w:6.4;--h:3"></i></div></figure>
+  </div></article>
+</section>
+
+<section class="stage" id="p2">
+  <div class="stage-head"><span class="tag">PART 2</span><h2>S3 — ที่เก็บไฟล์ผลตรวจ</h2><span class="t">~5 นาที</span></div>
+
+  <article class="step"><div class="num">2.1</div><div class="body">
+    <h3>Create bucket</h3>
+    <p>ค้นหา <b>S3</b> → <b>Create bucket</b> → General purpose · Bucket name <code>healthlab-uploads-&lt;รหัสนักศึกษา&gt;</code> (ต้องไม่ซ้ำทั้งโลก)</p>
+    <figure class="shot"><div class="frame"><img src="img/m-s3-1.jpg" alt="ตั้งชื่อ bucket" loading="lazy"><i class="hl" style="--l:3.1;--t:72.3;--w:61.5;--h:4.5"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">2.2</div><div class="body">
+    <h3>Block all public access ต้องติ๊กไว้</h3>
+    <p>เลื่อนลงมา ปล่อย <b>Block all public access</b> เปิดไว้ (ค่าเริ่มต้น) เพราะไฟล์ผลตรวจเป็นข้อมูลส่วนตัว · ที่เหลือปล่อยค่าเดิม → <b>Create bucket</b> ด้านล่างสุด</p>
+    <figure class="shot"><div class="frame"><img src="img/m-s3-2.jpg" alt="Block all public access" loading="lazy"><i class="hl" style="--l:2.8;--t:19;--w:13;--h:3.6"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">2.3</div><div class="body">
+    <h3>เข้า bucket → แท็บ Permissions</h3>
+    <figure class="shot"><div class="frame"><img src="img/m-s3-3.jpg" alt="สร้าง bucket สำเร็จ" loading="lazy"><i class="hl" style="--l:1.7;--t:13.3;--w:96.5;--h:5.4"></i><i class="hl" style="--l:24.6;--t:26.8;--w:6.3;--h:4"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">2.4</div><div class="body">
+    <h3>ตั้ง CORS ให้หน้าเว็บอัปโหลดไฟล์ได้</h3>
+    <p>แท็บ Permissions → เลื่อนลงไปที่ <b>Cross-origin resource sharing (CORS)</b> → <b>Edit</b> → วาง JSON ด้านล่าง (เปลี่ยน URL เป็นของคุณจากขั้น 1.3 <b>ไม่มี / ท้าย</b>) → <b>Save changes</b></p>
+    <div class="cmd"><pre>[{"AllowedHeaders": ["*"], "AllowedMethods": ["POST"], "AllowedOrigins": ["https://main.xxxxxxxx.amplifyapp.com"]}]</pre><button type="button">Copy</button></div>
+    <figure class="shot"><div class="frame"><img src="img/m-s3-cors.jpg" alt="CORS JSON editor" loading="lazy"><i class="hl" style="--l:5.3;--t:55;--w:79;--h:15"></i></div></figure>
+    <p class="ok">Successfully edited cross-origin resource sharing (CORS)</p>
+  </div></article>
+</section>
+
+<section class="stage" id="p3">
+  <div class="stage-head"><span class="tag">PART 3</span><h2>DynamoDB — เก็บประวัติผลตรวจ</h2><span class="t">~2 นาที</span></div>
+  <article class="step"><div class="num">3.1</div><div class="body">
+    <h3>Create table</h3>
+    <p>ค้นหา <b>DynamoDB</b> → <b>Create table</b> · Table name <code>HealthReports</code> · Partition key <code>userId</code> (String) · Sort key <code>reportId</code> (String) · Table settings = Default → <b>Create table</b></p>
+    <figure class="shot"><div class="frame"><img src="img/m-ddb-1.jpg" alt="ฟอร์ม Create table" loading="lazy"><i class="hl" style="--l:3.1;--t:34;--w:92.6;--h:4.6"></i><i class="hl" style="--l:3.1;--t:50.9;--w:40.7;--h:4.6"></i><i class="hl" style="--l:3.1;--t:64.6;--w:40.7;--h:4.6"></i></div><figcaption>ชื่อคีย์ต้องพิมพ์ให้ตรงตัวพิมพ์เล็ก-ใหญ่ เพราะโค้ดอ้างชื่อนี้</figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="img/m-ddb-2.jpg" alt="ตาราง HealthReports" loading="lazy"><i class="hl" style="--l:22.2;--t:38.2;--w:76;--h:5.8"></i></div></figure>
+    <p class="ok">ตาราง HealthReports สถานะ Creating แล้วเป็น Active ใน ~10 วินาที</p>
+  </div></article>
+</section>
+
+<section class="stage" id="p4">
+  <div class="stage-head"><span class="tag">PART 4</span><h2>SNS — ส่งอีเมลรายงานและแจ้งเตือน</h2><span class="t">~5 นาที</span></div>
+
+  <article class="step"><div class="num">4.1</div><div class="body">
+    <h3>Create topic</h3>
+    <p>ค้นหา <b>Simple Notification Service</b> → Topics → <b>Create topic</b> · Type <b>Standard</b> · Name <code>healthlab-alerts</code> → <b>Create topic</b></p>
+    <figure class="shot"><div class="frame"><img src="img/m-sns-1.jpg" alt="Create topic Standard" loading="lazy"><i class="hl" style="--l:34;--t:31.2;--w:30.6;--h:17.4"></i><i class="hl" style="--l:3.1;--t:53.6;--w:61.5;--h:4.6"></i></div></figure>
+    <p>จด <b>ARN</b> ของ topic ไว้ (ใช้ตั้งค่า Lambda)</p>
+    <figure class="shot"><div class="frame"><img src="img/m-sns-2.jpg" alt="topic สร้างแล้ว" loading="lazy"><i class="hl" style="--l:43;--t:38;--w:15;--h:9"></i><i class="hl" style="--l:84.6;--t:65.2;--w:11.2;--h:4.6"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">4.2</div><div class="body">
+    <h3>Create subscription อีเมลของคุณ (สำหรับผู้ใช้ทดสอบ)</h3>
+    <p>ในหน้า topic กด <b>Create subscription</b> · Protocol <b>Email</b> · Endpoint = อีเมลจริงของคุณ</p>
+    <figure class="shot"><div class="frame"><img src="img/m-sub-1.jpg" alt="Create subscription email" loading="lazy"><i class="hl" style="--l:3.1;--t:40.7;--w:61.5;--h:4.6"></i><i class="hl" style="--l:3.1;--t:52.3;--w:61.5;--h:4.6"></i></div></figure>
+    <p>เปิด <b>Subscription filter policy</b> → Scope <b>Message attributes</b> → วาง JSON นี้ แล้ว <b>Create subscription</b></p>
+    <div class="cmd"><pre>{"userId": ["test-user"]}</pre><button type="button">Copy</button></div>
+    <figure class="shot"><div class="frame"><img src="img/m-sub-2.jpg" alt="filter policy JSON" loading="lazy"><i class="hl" style="--l:3.1;--t:14.5;--w:14;--h:3.4"></i><i class="hl" style="--l:6.8;--t:38;--w:15.2;--h:3.4"></i></div><figcaption>ระบบส่งทุกข้อความเข้า topic เดียว filter policy ทำให้แต่ละอีเมลได้เฉพาะของ userId ตัวเอง (ผู้ใช้จริงที่สมัครผ่านเว็บ Lambda จะ subscribe ให้อัตโนมัติ)</figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="img/m-sub-3.jpg" alt="Pending confirmation" loading="lazy"><i class="hl" style="--l:61.6;--t:37.6;--w:11.6;--h:3.4"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">4.3</div><div class="body">
+    <h3>ยืนยันอีเมล</h3>
+    <p>เปิดอีเมล <b>AWS Notification - Subscription Confirmation</b> → <b>Confirm subscription</b> → กดปุ่ม Confirm Subscription อีกครั้งในหน้า SNS</p>
+    <figure class="shot"><div class="frame" style="max-width:760px"><img src="img/s1-email.jpg" alt="อีเมลยืนยัน" loading="lazy"><i class="hl" style="--l:5.8;--t:70.4;--w:12.4;--h:7.6"></i></div></figure>
+    <figure class="shot"><div class="frame" style="max-width:520px"><img src="img/s1-confirmed.jpg" alt="Subscription confirmed" loading="lazy"></div></figure>
+    <p class="ok">Subscription confirmed! และในหน้า topic สถานะเปลี่ยนเป็น Confirmed</p>
+  </div></article>
+</section>
+
+<section class="stage" id="p5">
+  <div class="stage-head"><span class="tag">PART 5</span><h2>Lambda ×4 — โค้ดหลังบ้าน</h2><span class="t">~20 นาที</span></div>
+  <p class="goal">สร้าง 4 function จากไฟล์ <code>lambda.zip</code> เดียวกัน ต่างกันแค่ชื่อ, Handler และ Timeout · ขั้น 5.1–5.6 แสดงตัวอย่างของ analyzer แล้วทำซ้ำกับอีก 3 ตัวตามตาราง</p>
+  <div class="tbl"><table class="res">
+    <tr><th>Function name</th><th>Handler</th><th>Timeout</th><th>ถูกเรียกโดย</th></tr>
+    <tr><td><code>healthlab-analyzer</code></td><td><code>app.analyzer</code></td><td>3 min</td><td>S3 (Part 6)</td></tr>
+    <tr><td><code>healthlab-api</code></td><td><code>app.api</code></td><td>30 sec</td><td>API Gateway (Part 8)</td></tr>
+    <tr><td><code>healthlab-subscribe</code></td><td><code>app.subscribe</code></td><td>10 sec</td><td>Cognito (Part 7)</td></tr>
+    <tr><td><code>healthlab-reminder</code></td><td><code>app.reminder</code></td><td>1 min</td><td>EventBridge (Part 9)</td></tr>
+  </table></div>
+
+  <article class="step"><div class="num">5.1</div><div class="body">
+    <h3>Create function</h3>
+    <p>ค้นหา <b>Lambda</b> → <b>Create function</b> → <b>Author from scratch</b> · Function name <code>healthlab-analyzer</code> · Runtime <b>Python 3.12</b></p>
+    <figure class="shot"><div class="frame"><img src="img/m-lam-1.jpg" alt="Create function" loading="lazy"><i class="hl" style="--l:3.1;--t:46.4;--w:61.5;--h:4.6"></i><i class="hl" style="--l:3.1;--t:60.6;--w:58;--h:4.6"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">5.2</div><div class="body">
+    <h3>ใช้ LabRole</h3>
+    <p>เปิด <b>Additional settings</b> → เปิดสวิตช์ <b>Custom execution role</b> → เลือก <b>LabRole</b> → Save → <b>Create function</b></p>
+    <figure class="shot"><div class="frame"><img src="img/m-lam-2.jpg" alt="เลือก LabRole" loading="lazy"><i class="hl" style="--l:3.1;--t:70.2;--w:56.4;--h:8.4"></i><i class="hl" style="--l:64.4;--t:31.4;--w:33;--h:4.6"></i></div><figcaption>Learner Lab สร้าง IAM role ใหม่ไม่ได้ ต้องใช้ LabRole ที่มีอยู่แล้วเสมอ</figcaption></figure>
+  </div></article>
+
+  <article class="step"><div class="num">5.3</div><div class="body">
+    <h3>อัปโหลดโค้ด lambda.zip</h3>
+    <p>แท็บ Code → ปุ่ม <b>Update</b> (หรือ Upload from) → <b>Update from a .zip file</b> → Choose file <code>lambda.zip</code> → Update</p>
+    <figure class="shot"><div class="frame"><img src="img/m-lam-3.jpg" alt="เมนู Update from a .zip file" loading="lazy"><i class="hl" style="--l:89.1;--t:69.2;--w:6.7;--h:4.4"></i><i class="hl" style="--l:77.3;--t:73.8;--w:18.4;--h:4"></i></div></figure>
+    <figure class="shot"><div class="frame"><img src="img/m-lam-4.jpg" alt="เลือก lambda.zip" loading="lazy"><i class="hl" style="--l:21.5;--t:47;--w:37.7;--h:6"></i><i class="hl" style="--l:73;--t:67;--w:5.6;--h:4.4"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">5.4</div><div class="body">
+    <h3>ตั้ง Handler</h3>
+    <p>เลื่อนลงไปที่ <b>Runtime settings</b> → Edit → Handler <code>app.analyzer</code> → Save settings</p>
+    <figure class="shot"><div class="frame"><img src="img/m-lam-5.jpg" alt="ตั้ง Handler" loading="lazy"><i class="hl" style="--l:3.1;--t:48.7;--w:62.2;--h:4.6"></i></div><figcaption>รูปแบบคือ <code>ชื่อไฟล์.ชื่อฟังก์ชัน</code> · ถ้าไม่แก้ Lambda จะหา <code>lambda_function.lambda_handler</code> ซึ่งไม่มี</figcaption></figure>
+  </div></article>
+
+  <article class="step"><div class="num">5.5</div><div class="body">
+    <h3>Memory และ Timeout</h3>
+    <p>แท็บ <b>Configuration</b> → General configuration → Edit · Memory <code>256</code> MB · Timeout ตามตาราง (analyzer = 3 min 0 sec เผื่อ retry ตอน Gemini คิวเต็ม) → Save</p>
+    <figure class="shot"><div class="frame"><img src="img/m-lam-6.jpg" alt="Memory และ Timeout" loading="lazy"><i class="hl" style="--l:3.1;--t:40.7;--w:13.3;--h:4.6"></i><i class="hl" style="--l:3.1;--t:87.2;--w:16.4;--h:4.6"></i></div><figcaption>ค่าเริ่มต้น 3 วินาทีไม่พอ เพราะ Gemini ใช้เวลาวิเคราะห์ ~10–15 วินาที</figcaption></figure>
+  </div></article>
+
+  <article class="step"><div class="num">5.6</div><div class="body">
+    <h3>Environment variables</h3>
+    <p>Configuration → <b>Environment variables</b> → Edit → Add environment variable ทีละตัว → Save</p>
+    <div class="tbl"><table class="res">
+      <tr><th>Key</th><th>Value (ตัวอย่าง ใช้ของคุณ)</th></tr>
+      <tr><td><code>TABLE</code></td><td><code>HealthReports</code></td></tr>
+      <tr><td><code>BUCKET</code></td><td><code>healthlab-uploads-&lt;รหัส&gt;</code></td></tr>
+      <tr><td><code>TOPIC_ARN</code></td><td>ARN ของ topic จากขั้น 4.1</td></tr>
+      <tr><td><code>APP_URL</code></td><td>URL จากขั้น 1.3 <b>มี / ท้าย</b></td></tr>
+      <tr><td><code>GEMINI_API_KEY</code></td><td>key จากขั้น 0.4 (ต้องใส่ใน analyzer และ api)</td></tr>
+    </table></div>
+    <figure class="shot"><div class="frame"><img src="img/m-lam-7.jpg" alt="Environment variables 5 ตัว" loading="lazy"><i class="hl" style="--l:3.1;--t:41;--w:69.4;--h:27.8"></i></div><figcaption>ในภาพใส่ค่าตัวอย่างแทน key จริง ให้วาง key ของคุณเอง · อย่าเปิดหน้านี้ตอนแชร์จอ</figcaption></figure>
+    <p class="note"><b>ทำซ้ำ 5.1–5.6</b> สำหรับ <code>healthlab-api</code>, <code>healthlab-subscribe</code>, <code>healthlab-reminder</code> โดยเปลี่ยนชื่อ, Handler และ Timeout ตามตารางด้านบน ส่วน Environment variables ใส่ชุดเดียวกันทุกตัว</p>
+  </div></article>
+</section>
+
+<section class="stage" id="p6">
+  <div class="stage-head"><span class="tag">PART 6</span><h2>เชื่อม S3 → Lambda analyzer แล้วทดสอบ</h2><span class="t">~5 นาที</span></div>
+
+  <article class="step"><div class="num">6.1</div><div class="body">
+    <h3>Add trigger: S3</h3>
+    <p>เปิด function <code>healthlab-analyzer</code> → <b>+ Add trigger</b> → Source <b>S3</b> · Bucket = bucket ของคุณ · Event types <b>All object create events</b> · Prefix <code>uploads/</code></p>
+    <figure class="shot"><div class="frame"><img src="img/m-trig-1.jpg" alt="Add trigger S3" loading="lazy"><i class="hl" style="--l:3.1;--t:27.8;--w:92.6;--h:6.8"></i><i class="hl" style="--l:3.1;--t:42.3;--w:61.5;--h:4.6"></i><i class="hl" style="--l:3.1;--t:77;--w:61.5;--h:4.6"></i></div><figcaption>Prefix <code>uploads/</code> สำคัญ เพราะหน้าเว็บอัปโหลดไฟล์ไปที่ <code>uploads/&lt;userId&gt;/</code></figcaption></figure>
+    <p>ติ๊กยอมรับเรื่อง Recursive invocation → <b>Add</b></p>
+    <figure class="shot"><div class="frame"><img src="img/m-trig-2.jpg" alt="ยอมรับ recursive invocation" loading="lazy"><i class="hl" style="--l:3.1;--t:68.5;--w:59.6;--h:6"></i><i class="hl" style="--l:93.3;--t:85.3;--w:4;--h:4.6"></i></div><figcaption>analyzer ไม่ได้เขียนไฟล์กลับเข้า bucket จึงไม่เกิด loop</figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="img/m-trig-3.jpg" alt="Function overview มี S3" loading="lazy"><i class="hl" style="--l:3.1;--t:57.3;--w:27;--h:7.8"></i></div></figure>
+    <p class="ok">The trigger … was successfully added · ใน diagram มีกล่อง S3 ต่อเข้า function</p>
+  </div></article>
+
+  <article class="step"><div class="num">6.2</div><div class="body">
+    <h3>ทดสอบ: อัปโหลดผลเลือดจำลองเข้า S3 เอง</h3>
+    <p>S3 → bucket → <b>Create folder</b> <code>uploads</code> → เข้าไปสร้างโฟลเดอร์ <code>test-user</code> → <b>Upload</b> → Add files <code>samples/blood-test.txt</code> → Upload</p>
+    <figure class="shot"><div class="frame"><img src="img/m-test-upload.jpg" alt="อัปโหลดไฟล์ไปที่ uploads/test-user/" loading="lazy"><i class="hl" style="--l:3.1;--t:57.9;--w:92.8;--h:4.4"></i><i class="hl" style="--l:3.1;--t:74.8;--w:27;--h:3.6"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">6.3</div><div class="body">
+    <h3>ดูผลใน DynamoDB และอีเมล</h3>
+    <p>รอ ~20 วินาที → DynamoDB → <b>Explore items</b> → HealthReports → Run → คลิกรายการ <code>test-user</code></p>
+    <figure class="shot"><div class="frame"><img src="img/m-test-ddb.jpg" alt="item status DONE" loading="lazy"><i class="hl" style="--l:4.8;--t:73.3;--w:90.4;--h:7"></i></div></figure>
+    <p class="ok">status = DONE และมี result (map) · ได้อีเมล "HealthLab: your lab report" พร้อมรายงานภาษาไทย</p>
+    <figure class="shot"><div class="frame" style="max-width:760px"><img src="img/s2-email.jpg" alt="อีเมลรายงาน" loading="lazy"></div></figure>
+    <p class="note">ถ้าเป็น ERROR หรือค้าง PROCESSING: Lambda → healthlab-analyzer → Monitor → <b>View CloudWatch logs</b> · <code>Gemini HTTP 400/403</code> = key ผิด · ไม่มี log เลย = trigger/prefix ไม่ถูก</p>
+  </div></article>
+</section>
+
+<section class="stage" id="p7">
+  <div class="stage-head"><span class="tag">PART 7</span><h2>Cognito — ระบบสมัคร / login</h2><span class="t">~8 นาที</span></div>
+
+  <article class="step"><div class="num">7.1</div><div class="body">
+    <h3>สร้าง User pool สำหรับ Single-page application</h3>
+    <p>ค้นหา <b>Cognito</b> → <b>Create user pool</b> · Application type <b>Single-page application (SPA)</b> · Name <code>healthlab-web</code> · Sign-in identifiers ติ๊ก <b>Email</b> · Self-registration เปิด</p>
+    <figure class="shot"><div class="frame"><img src="img/m-cog-1.jpg" alt="Cognito ตั้งค่า SPA" loading="lazy"><i class="hl" style="--l:26.4;--t:12.4;--w:22.9;--h:12"></i><i class="hl" style="--l:3.1;--t:29.8;--w:92.6;--h:4.8"></i><i class="hl" style="--l:2.8;--t:59.6;--w:6;--h:3.4"></i></div></figure>
+    <p>Required attributes <b>email</b> · Return URL = URL จากขั้น 1.3 <b>มี / ท้าย</b> → <b>Create user directory</b></p>
+    <figure class="shot"><div class="frame"><img src="img/m-cog-2.jpg" alt="required attribute และ return URL" loading="lazy"><i class="hl" style="--l:3.1;--t:46.8;--w:15.7;--h:6"></i><i class="hl" style="--l:3.1;--t:77;--w:92.6;--h:4.8"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">7.2</div><div class="body">
+    <h3>จด User pool ID</h3>
+    <p>ไปที่ user pool ที่สร้าง (เมนู Overview) จด <b>User pool ID</b> เช่น <code>us-east-1_NYLmmp544</code></p>
+    <figure class="shot"><div class="frame"><img src="img/m-cog-4.jpg" alt="User pool ID" loading="lazy"><i class="hl" style="--l:23.5;--t:48.6;--w:13;--h:6"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">7.3</div><div class="body">
+    <h3>เชื่อม Cognito → Lambda subscribe</h3>
+    <p>เมนู <b>Extensions</b> → <b>Add Lambda trigger</b> → Trigger type <b>Sign-up</b> → <b>Post confirmation trigger</b> → Lambda function <code>healthlab-subscribe</code> → Add Lambda trigger</p>
+    <figure class="shot"><div class="frame"><img src="img/m-cog-trig-1.jpg" alt="Post confirmation trigger" loading="lazy"><i class="hl" style="--l:3.1;--t:33.4;--w:28.4;--h:5.2"></i><i class="hl" style="--l:3.1;--t:65.6;--w:61.5;--h:4.8"></i></div><figcaption>เมื่อผู้ใช้ยืนยันอีเมลสมัครเสร็จ Cognito จะเรียก subscribe ให้ subscribe อีเมลนั้นเข้า SNS พร้อม filter policy ของเขาเอง</figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="img/m-cog-trig-2.jpg" alt="trigger ถูกเพิ่มแล้ว" loading="lazy"><i class="hl" style="--l:23.5;--t:46;--w:73.4;--h:5.6"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">7.4</div><div class="body">
+    <h3>จด Client ID และ Cognito domain</h3>
+    <p>เมนู <b>App clients</b> → <code>healthlab-web</code> → จด <b>Client ID</b></p>
+    <figure class="shot"><div class="frame"><img src="img/m-cog-client.jpg" alt="Client ID" loading="lazy"><i class="hl" style="--l:23.5;--t:36.6;--w:16.4;--h:5.6"></i></div></figure>
+    <p>แท็บ <b>Login pages</b> ตรวจว่า Allowed callback URL เป็น URL เว็บ และ scopes มี <b>email</b>, <b>openid</b> · Cognito domain ดูได้ที่เมนู <b>Domain</b> (รูปแบบ <code>https://&lt;prefix&gt;.auth.us-east-1.amazoncognito.com</code>)</p>
+    <figure class="shot"><div class="frame"><img src="img/m-cog-login.jpg" alt="Login pages callback และ scopes" loading="lazy"><i class="hl" style="--l:23.5;--t:32.6;--w:20.4;--h:5.8"></i><i class="hl" style="--l:61;--t:41;--w:11.2;--h:11.8"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">7.5</div><div class="body">
+    <h3>(ถ้าจะทดสอบ API ด้วย CLI ใน Part 11) เปิด admin auth flow</h3>
+    <p>App client → Edit → Authentication flows ติ๊ก <b>ALLOW_ADMIN_USER_PASSWORD_AUTH</b> → Save changes</p>
+    <figure class="shot"><div class="frame"><img src="img/m-cog-flow.jpg" alt="ALLOW_ADMIN_USER_PASSWORD_AUTH" loading="lazy"><i class="hl" style="--l:3.1;--t:54.8;--w:52.4;--h:5.6"></i></div></figure>
+  </div></article>
+</section>
+
+<section class="stage" id="p8">
+  <div class="stage-head"><span class="tag">PART 8</span><h2>API Gateway — ประตูให้หน้าเว็บเรียกหลังบ้าน</h2><span class="t">~10 นาที</span></div>
+
+  <article class="step"><div class="num">8.1</div><div class="body">
+    <h3>Create API → HTTP API → Build</h3>
+    <p>ค้นหา <b>API Gateway</b> → Create an API → <b>HTTP API</b> → Build · API name <code>healthlab-api</code> · Add integration <b>Lambda</b> → <code>healthlab-api</code> · Version 2.0 → Next</p>
+    <figure class="shot"><div class="frame"><img src="img/m-api-1.jpg" alt="Configure API" loading="lazy"><i class="hl" style="--l:23.7;--t:22.3;--w:47.7;--h:4.8"></i><i class="hl" style="--l:23.7;--t:60;--w:54;--h:14.4"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">8.2</div><div class="body">
+    <h3>Configure routes — 4 เส้น</h3>
+    <div class="tbl"><table class="res">
+      <tr><th>Method</th><th>Resource path</th><th>Integration target</th></tr>
+      <tr><td>POST</td><td><code>/upload-url</code></td><td>healthlab-api</td></tr>
+      <tr><td>GET</td><td><code>/reports</code></td><td>healthlab-api</td></tr>
+      <tr><td>GET</td><td><code>/reports/{id}</code></td><td>healthlab-api</td></tr>
+      <tr><td>POST</td><td><code>/ask</code></td><td>healthlab-api</td></tr>
+    </table></div>
+    <figure class="shot"><div class="frame"><img src="img/m-api-2.jpg" alt="Configure routes 4 เส้น" loading="lazy"><i class="hl" style="--l:23.7;--t:49;--w:73;--h:22"></i></div></figure>
+    <p>Next → Stage <code>$default</code> Auto-deploy เปิด → Next → <b>Create</b></p>
+    <figure class="shot"><div class="frame"><img src="img/m-api-3.jpg" alt="Stage default auto-deploy" loading="lazy"><i class="hl" style="--l:23.7;--t:49.8;--w:52;--h:4.8"></i></div></figure>
+    <figure class="shot"><div class="frame"><img src="img/m-api-4.jpg" alt="API สร้างแล้ว" loading="lazy"><i class="hl" style="--l:22.2;--t:14;--w:76;--h:5.8"></i></div><figcaption>Invoke URL = <code>https://&lt;api-id&gt;.execute-api.us-east-1.amazonaws.com</code> ดูได้ที่เมนู API ด้านซ้ายหรือ Stages</figcaption></figure>
+  </div></article>
+
+  <article class="step"><div class="num">8.3</div><div class="body">
+    <h3>สร้าง JWT authorizer ผูกกับ Cognito</h3>
+    <p>เมนู <b>Authorization</b> → แท็บ Manage authorizers → <b>Create</b> · Type <b>JWT</b> · Name <code>cognito</code> · Issuer URL <code>https://cognito-idp.us-east-1.amazonaws.com/&lt;User pool ID&gt;</code> · Add audience = <b>Client ID</b> → Create</p>
+    <figure class="shot"><div class="frame"><img src="img/m-jwt-1.jpg" alt="ฟอร์ม JWT authorizer" loading="lazy"><i class="hl" style="--l:23.5;--t:58.6;--w:47.9;--h:4.8"></i><i class="hl" style="--l:23.5;--t:71;--w:35.8;--h:4.8"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">8.4</div><div class="body">
+    <h3>ผูก authorizer กับทุก route</h3>
+    <p>แท็บ <b>Attach authorizers to routes</b> → คลิก route → เลือก <code>cognito</code> → <b>Attach authorizer</b> · <b>ทำซ้ำครบทั้ง 4 route</b> (จะขึ้นป้าย JWT Auth)</p>
+    <figure class="shot"><div class="frame"><img src="img/m-jwt-2.jpg" alt="Attach authorizer" loading="lazy"><i class="hl" style="--l:49;--t:69;--w:34.9;--h:4.8"></i><i class="hl" style="--l:84.9;--t:69;--w:10.4;--h:4.8"></i></div><figcaption>route ที่ไม่ได้ผูก ใครก็เรียกได้โดยไม่ต้อง login</figcaption></figure>
+  </div></article>
+
+  <article class="step"><div class="num">8.5</div><div class="body">
+    <h3>CORS ของ API</h3>
+    <p>เมนู <b>CORS</b> → Configure · Allow-Origin = URL เว็บ (ไม่มี / ท้าย) · Allow-Headers <code>authorization</code>, <code>content-type</code> · Allow-Methods GET, POST · Max-Age 3600 → Save</p>
+    <figure class="shot"><div class="frame"><img src="img/m-cors.jpg" alt="ตั้งค่า CORS" loading="lazy"><i class="hl" style="--l:23.5;--t:49.8;--w:23;--h:4.6"></i><i class="hl" style="--l:60.2;--t:49.8;--w:19.2;--h:4.6"></i><i class="hl" style="--l:23.5;--t:69.3;--w:11.4;--h:4.6"></i></div></figure>
+  </div></article>
+</section>
+
+<section class="stage" id="p9">
+  <div class="stage-head"><span class="tag">PART 9</span><h2>EventBridge — เตือนตรวจซ้ำทุกวัน</h2><span class="t">~4 นาที</span></div>
+
+  <article class="step"><div class="num">9.1</div><div class="body">
+    <h3>Create scheduled rule</h3>
+    <p>ค้นหา <b>EventBridge</b> → เมนู <b>Scheduled rules (legacy)</b> → Create scheduled rule · Name <code>healthlab-daily-reminder</code> → Next</p>
+    <figure class="shot"><div class="frame"><img src="img/m-eb-1.jpg" alt="ตั้งชื่อ rule" loading="lazy"><i class="hl" style="--l:44.1;--t:34.7;--w:51.7;--h:4.8"></i><i class="hl" style="--l:1.5;--t:75.6;--w:16;--h:4.6"></i></div><figcaption>ใช้ Scheduled rule ไม่ใช่ EventBridge Scheduler เพราะ Scheduler ต้องสร้าง IAM role ซึ่ง Learner Lab ไม่อนุญาต</figcaption></figure>
+  </div></article>
+
+  <article class="step"><div class="num">9.2</div><div class="body">
+    <h3>Cron expression</h3>
+    <p>เลือก fine-grained schedule → ใส่ทีละช่อง <code>0</code> <code>2</code> <code>*</code> <code>*</code> <code>?</code> <code>*</code> (= ทุกวัน 02:00 UTC = 09:00 เวลาไทย) → Next</p>
+    <figure class="shot"><div class="frame"><img src="img/m-eb-2.jpg" alt="cron 0 2 * * ? *" loading="lazy"><i class="hl" style="--l:44.1;--t:54.5;--w:47.8;--h:5"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">9.3</div><div class="body">
+    <h3>Target = Lambda reminder · เอาติ๊ก execution role ออก</h3>
+    <p>Target types <b>AWS service</b> → <b>Lambda function</b> → Function <code>healthlab-reminder</code> → <b>เอาติ๊ก Use execution role ออก</b> → Skip to Review and create → Create rule</p>
+    <figure class="shot"><div class="frame"><img src="img/m-eb-3.jpg" alt="target Lambda reminder" loading="lazy"><i class="hl" style="--l:44.1;--t:54.4;--w:51.7;--h:4.8"></i><i class="hl" style="--l:44.1;--t:69.3;--w:17.8;--h:3.4"></i></div><figcaption>ถ้าปล่อยติ๊กไว้ console จะพยายามสร้าง role ใหม่แล้ว error · พอไม่ใช้ role console จะเพิ่ม permission ฝั่ง Lambda ให้แทน</figcaption></figure>
+    <figure class="shot"><div class="frame"><img src="img/m-eb-4.jpg" alt="rule สร้างแล้ว Enabled" loading="lazy"><i class="hl" style="--l:42.3;--t:37.4;--w:5.4;--h:3.4"></i><i class="hl" style="--l:23.5;--t:78.4;--w:6.4;--h:3.6"></i></div></figure>
+    <p class="ok">Rule … was created successfully · Status Enabled · Cron 0 2 * * ? *</p>
+  </div></article>
+</section>
+
+<section class="stage" id="p10">
+  <div class="stage-head"><span class="tag">PART 10</span><h2>หน้าเว็บ — ใส่ค่าแล้ว deploy ใหม่</h2><span class="t">~5 นาที</span></div>
+
+  <article class="step"><div class="num">10.1</div><div class="body">
+    <h3>แก้ 3 บรรทัดใน web/index.html</h3>
+    <p>เปิดไฟล์ด้วย Notepad / VS Code ค้นหา <code>const CFG</code> แล้วแทนค่าด้วยของคุณ</p>
+    <div class="cmd"><pre>  apiUrl: 'https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com',
+  cognitoDomain: 'https://us-east-1xxxxxxxx.auth.us-east-1.amazoncognito.com',
+  clientId: 'xxxxxxxxxxxxxxxxxxxxxxxxxx',</pre><button type="button">Copy</button></div>
+    <ul><li><b>apiUrl</b> = Invoke URL จาก 8.2 (ไม่มี / ท้าย)</li><li><b>cognitoDomain</b> = domain จาก 7.4</li><li><b>clientId</b> = Client ID จาก 7.4</li></ul>
+    <p>บันทึก แล้ว zip ไฟล์ index.html ใหม่เป็น <code>web.zip</code></p>
+  </div></article>
+
+  <article class="step"><div class="num">10.2</div><div class="body">
+    <h3>Amplify → Deploy updates</h3>
+    <p>Amplify → healthlab → branch main → <b>Deploy updates</b> → Drag and drop zip ใหม่ → <b>Save and deploy</b></p>
+    <figure class="shot"><div class="frame"><img src="img/m-amp-upd.jpg" alt="Deploy updates" loading="lazy"><i class="hl" style="--l:27;--t:64.2;--w:69.6;--h:14"></i><i class="hl" style="--l:86.3;--t:85.5;--w:10.5;--h:5.2"></i></div></figure>
+  </div></article>
+
+  <article class="step"><div class="num">10.3</div><div class="body">
+    <h3>เปิดเว็บ → กด เข้าสู่ระบบ / สมัคร</h3>
+    <p>เปิด URL เว็บ (ลงท้ายด้วย /) → กดปุ่ม <b>เข้าสู่ระบบ / สมัคร</b> → ต้องเด้งไปหน้า login ของ Cognito</p>
+    <figure class="shot"><div class="frame" style="max-width:560px"><img src="img/web-home.jpg" alt="หน้าแรก HealthLab" loading="lazy"><i class="hl" style="--l:70.6;--t:74.4;--w:25;--h:8"></i></div></figure>
+    <figure class="shot"><div class="frame"><img src="img/m-web-login.jpg" alt="หน้า Sign in ของ Cognito" loading="lazy"><i class="hl" style="--l:35.4;--t:31;--w:29.2;--h:38"></i></div></figure>
+    <p class="note">⚠️ ใช้อีเมลคนละอันกับขั้น 4.2 หรือลบ subscription <code>test-user</code> ใน SNS ก่อน — SNS ไม่ยอมให้อีเมลเดียวกัน subscribe topic เดิมซ้ำด้วย filter policy ต่างกัน บัญชีนี้จะไม่ได้อีเมลเลย</p>
+    <ol>
+      <li><b>Create an account</b> → อีเมลจริง + รหัสผ่าน → ใส่รหัส 6 หลักจากอีเมล</li>
+      <li>เปิดอีเมล Subscription Confirmation (ส่งโดย Lambda subscribe) → Confirm</li>
+      <li>กด <b>ทดลองด้วยผลเลือดจำลอง</b> หรืออัปโหลดรูปใบผล → เห็นผลวิเคราะห์ภาษาไทย และได้อีเมลรายงาน</li>
+    </ol>
+    <p class="note">login error <code>redirect_mismatch</code> = Return URL ใน Cognito ไม่ตรงกับ URL ที่เปิด (ต้องมี / ท้ายเหมือนกัน)</p>
+  </div></article>
+</section>
+
+<section class="stage" id="p11">
+  <div class="stage-head"><span class="tag">PART 11</span><h2>ทดสอบหลังบ้านด้วย CloudShell (ไม่บังคับ)</h2></div>
+  <p class="goal">ใช้ตรวจว่า API, authorizer และ reminder ทำงานโดยไม่ต้องใช้หน้าเว็บ · เปิด CloudShell จากไอคอน &gt;_ แล้วแก้ค่าในบรรทัดแรกเป็นของคุณ (ต้องทำขั้น 7.5 ก่อน)</p>
+
+  <article class="step"><div class="num">11.1</div><div class="body">
+    <h3>ขอ token แล้วเรียก API</h3>
+    <div class="cmd"><pre>API_URL=https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com; POOL=us-east-1_xxxxxxxxx; CLIENT=xxxxxxxxxxxxxxxxxxxxxxxxxx
+aws cognito-idp admin-create-user --user-pool-id $POOL --username tester@example.com --message-action SUPPRESS &gt; /dev/null
+aws cognito-idp admin-set-user-password --user-pool-id $POOL --username tester@example.com --password 'Passw0rd-123' --permanent
+TOKEN=$(aws cognito-idp admin-initiate-auth --user-pool-id $POOL --client-id $CLIENT --auth-flow ADMIN_USER_PASSWORD_AUTH \
+  --auth-parameters USERNAME=tester@example.com,PASSWORD=Passw0rd-123 --query AuthenticationResult.IdToken --output text); echo ${#TOKEN}
+curl -s $API_URL/reports; echo; curl -s -H "Authorization: Bearer $TOKEN" $API_URL/reports; echo</pre><button type="button">Copy</button></div>
+    <figure class="shot"><div class="frame"><img src="img/t-api.jpg" alt="Unauthorized แล้ว items ว่าง" loading="lazy"></div></figure>
+    <p class="ok">ความยาว token ~1100 · ไม่มี token = {"message":"Unauthorized"} · มี token = {"items": []}</p>
+  </div></article>
+
+  <article class="step"><div class="num">11.2</div><div class="body">
+    <h3>Flow เต็มแบบหน้าเว็บ: ขอ URL → อัปโหลด → อ่านผล</h3>
+    <div class="cmd"><pre>curl -sLO https://raw.githubusercontent.com/haru-mishi/healthlab/main/samples/blood-test.txt
+R=$(curl -s -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"contentType":"text/plain"}' $API_URL/upload-url)
+RID=$(echo "$R" | jq -r .reportId); echo $RID
+curl -s -o /dev/null -w 'S3 upload: %{http_code}\n' $(echo "$R" | jq -r '.fields | to_entries[] | "-F \(.key)=\(.value)"') \
+  -F file=@blood-test.txt "$(echo "$R" | jq -r .url)"; sleep 20
+curl -s -H "Authorization: Bearer $TOKEN" $API_URL/reports/$RID | jq -c '{status, items: [.result.status[] | "\(.name)=\(.status)"]}'</pre><button type="button">Copy</button></div>
+    <figure class="shot"><div class="frame"><img src="img/t-flow.jpg" alt="S3 upload 204 status DONE" loading="lazy"></div></figure>
+    <p class="ok">S3 upload: 204 · "status":"DONE" พร้อมค่าต่างๆ</p>
+  </div></article>
+
+  <article class="step"><div class="num">11.3</div><div class="body">
+    <h3>ทดสอบ reminder ทันที</h3>
+    <p>Lambda <code>healthlab-reminder</code> → Environment variables เพิ่ม <code>REMIND_DAYS</code> = <code>0</code> แล้วรัน:</p>
+    <div class="cmd"><pre>aws lambda invoke --function-name healthlab-reminder /tmp/out.json &gt; /dev/null &amp;&amp; cat /tmp/out.json; echo</pre><button type="button">Copy</button></div>
+    <figure class="shot"><div class="frame"><img src="img/t-remind.jpg" alt="reminded 2 แล้ว 0" loading="lazy"></div></figure>
+    <p class="ok">ครั้งแรก {"reminded": N} (N = จำนวนผู้ใช้ที่ผลล่าสุดผิดปกติ ปกติ 2–3) และได้อีเมลเตือน · ครั้งที่สอง {"reminded": 0} (ไม่เตือนซ้ำ) · เสร็จแล้วลบ REMIND_DAYS ออก (ค่าเริ่มต้น 90 วัน)</p>
+  </div></article>
+</section>
+
+<section class="stage" id="p12">
+  <div class="stage-head"><span class="tag">PART 12</span><h2>ลบทุกอย่างหลังส่งงาน</h2></div>
+  <article class="step"><div class="num">X</div><div class="body">
+    <p>ลบตามลำดับนี้ใน Console (ย้อนกลับจากตอนสร้าง):</p>
+    <ol>
+      <li><b>EventBridge</b> → Scheduled rules → healthlab-daily-reminder → Delete</li>
+      <li><b>API Gateway</b> → healthlab-api → Delete</li>
+      <li><b>Cognito</b> → user pool → เมนู Domain → Delete domain ก่อน → ปิด <b>Deletion protection</b> (wizard เปิดไว้ให้อัตโนมัติ) → Delete user pool</li>
+      <li><b>Lambda</b> → ลบทั้ง 4 function · <b>CloudWatch</b> → Log groups → ลบ <code>/aws/lambda/healthlab-*</code></li>
+      <li><b>SNS</b> → Topics → healthlab-alerts → Delete (subscription หายไปด้วย)</li>
+      <li><b>DynamoDB</b> → HealthReports → Delete</li>
+      <li><b>S3</b> → bucket → <b>Empty</b> ก่อน → แล้ว Delete</li>
+      <li><b>Amplify</b> → healthlab → App settings → General settings → Delete app</li>
+      <li>ลบ Gemini key ที่ AI Studio และกด <b>End Lab</b></li>
+    </ol>
+  </div></article>
+</section>
+
+<footer>HealthLab · IT332/CS446 Cloud Computing · Bangkok University · ภาพทั้งหมดจากการสร้างจริงบน Learner Lab เมื่อ 15 พ.ย. 2569 · วิธีสร้างแบบอัตโนมัติด้วย OpenTofu อยู่ใน README.md ของโปรเจกต์</footer>
+</main>
+</div>
+</div>
+
+<dialog id="lb" aria-label="ภาพขยาย"><img alt=""></dialog>
+
+<script>
+document.querySelectorAll('.cmd button').forEach(function(b){
+  b.addEventListener('click',function(){
+    var pre=b.previousElementSibling, t=pre.textContent;
+    function done(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1500)}
+    function fallback(){var r=document.createRange();r.selectNodeContents(pre);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Ctrl+C'}
+    try{navigator.clipboard.writeText(t).then(done,fallback)}catch(e){fallback()}
+  });
+});
+var lb=document.getElementById('lb'), lbImg=lb.querySelector('img');
+document.querySelectorAll('.frame').forEach(function(f){
+  f.addEventListener('click',function(){var i=f.querySelector('img');lbImg.src=i.src;lbImg.alt=i.alt;try{lb.showModal()}catch(e){}});
+});
+lb.addEventListener('click',function(){lb.close()});
+</script>

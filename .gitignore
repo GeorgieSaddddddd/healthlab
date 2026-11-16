@@ -1,0 +1,9 @@
+# contains the Gemini API key — never commit
+infra/terraform.tfvars
+infra/terraform.tfstate*
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/build/
+# stage files are copied into infra/ while building
+infra/[1-5]-*.tf
+__pycache__/

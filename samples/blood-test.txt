@@ -1,0 +1,10 @@
+ผลตรวจสุขภาพ (ข้อมูลจำลอง) อายุ 42 ปี
+Hemoglobin 12.1 g/dL (ปกติ 13.5-17.5)
+Fasting Blood Sugar 118 mg/dL (ปกติ 70-99)
+HbA1c 6.2% (ปกติ <5.7%)
+Total Cholesterol 235 mg/dL (ปกติ <200)
+LDL 158 mg/dL (ปกติ <130)
+HDL 42 mg/dL (ปกติ >40)
+Triglyceride 195 mg/dL (ปกติ <150)
+SGPT ALT 52 U/L (ปกติ 10-40)
+Creatinine 0.9 mg/dL (ปกติ 0.7-1.2)

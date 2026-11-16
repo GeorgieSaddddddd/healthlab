@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Screener & Lab Report Explainer</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+    <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+    [hidden]{display:none!important;}
+    body{background:#f5f7f5;}
+    .wrap{max-width:640px;margin:0 auto;padding:20px 16px 40px;}
+
+    .hero{text-align:center;padding:28px 20px 24px;background:#fff;border-radius:16px;margin-bottom:16px;border:1px solid #e4e9e6;}
+    .hero-icon{width:68px;height:68px;border-radius:50%;background:#dcf5ec;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+    .hero-icon i{font-size:32px;color:#0c6644;}
+    .hero h1{font-size:20px;font-weight:600;color:#111;margin-bottom:6px;}
+    .hero p{font-size:14px;color:#555;line-height:1.65;}
+    .pills{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap;}
+    .pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:5px 13px;border-radius:100px;}
+    .pill-green{background:#dcf5ec;color:#0c5236;}
+    .pill-blue{background:#e8f0fe;color:#1a56b0;}
+    .pill-orange{background:#fff1e0;color:#8a4b00;}
+    .pill i{font-size:13px;}
+
+    .how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+    .how-card{background:#fff;border:1px solid #e4e9e6;border-radius:12px;padding:14px 10px;text-align:center;}
+    .how-ic{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 9px;}
+    .how-ic i{font-size:21px;}
+    .ic-green{background:#dcf5ec;} .ic-green i{color:#0c6644;}
+    .ic-blue{background:#e8f0fe;} .ic-blue i{color:#1a56b0;}
+    .ic-lime{background:#e8f5d8;} .ic-lime i{color:#365f14;}
+    .how-card h3{font-size:13px;font-weight:600;color:#111;margin-bottom:3px;}
+    .how-card p{font-size:12px;color:#666;line-height:1.5;}
+
+    .auth-box{background:#fff;border:1px solid #e4e9e6;border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .auth-box .ak-title{font-size:13px;font-weight:600;color:#111;display:flex;align-items:center;gap:6px;flex:1;min-width:180px;}
+    .auth-box .ak-title i{color:#1a56b0;font-size:16px;}
+    .ak-btn{padding:9px 14px;background:#4285f4;color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+    .ak-btn:hover{background:#2b6fe0;}
+    .ak-btn.ghost{background:#f5f7f5;color:#555;border:1.5px solid #dde6e0;}
+    .ak-btn.ghost:hover{background:#fff;}
+
+    .steps-bar{display:grid;grid-template-columns:repeat(5,1fr);background:#f0f4f1;border:1px solid #dde6e0;border-radius:12px;overflow:hidden;margin-bottom:8px;}
+    .stp{padding:9px 4px;text-align:center;font-size:10px;color:#888;border-right:1px solid #dde6e0;display:flex;flex-direction:column;align-items:center;gap:3px;transition:all 0.3s;}
+    .stp:last-child{border-right:none;}
+    .stp i{font-size:17px;}
+    .stp.active{background:#fff;color:#0c6644;font-weight:600;}
+    .stp.done{color:#1a9c6e;}
+
+    .prog-wrap{height:4px;background:#dde6e0;border-radius:100px;overflow:hidden;margin-bottom:20px;}
+    .prog-fill{height:100%;background:#1a9c6e;border-radius:100px;width:0%;transition:width 0.6s ease;}
+
+    .slabel{font-size:11px;font-weight:600;color:#666;margin-bottom:8px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:0.5px;}
+    .slabel i{font-size:14px;color:#1a9c6e;}
+
+    .drop-zone{border:2px dashed #b2d8c6;border-radius:14px;padding:28px 16px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:10px;background:#f8fdf9;}
+    .drop-zone:hover,.drop-zone.drag{border-color:#1a9c6e;background:#edfaf3;}
+    .drop-zone .up-ic{font-size:38px;color:#1a9c6e;display:block;margin-bottom:10px;}
+    .drop-zone h3{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:5px;}
+    .drop-zone p{font-size:13px;color:#666;}
+    .pick-btn{display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:8px 18px;border:1.5px solid #ccc;border-radius:8px;background:#fff;font-size:13px;cursor:pointer;color:#333;font-weight:500;}
+    .pick-btn:hover{background:#f0f4f1;}
+    .drop-zone .fmt{font-size:11px;color:#aaa;margin-top:8px;}
+
+    .or-row{display:flex;align-items:center;gap:10px;margin:12px 0;color:#bbb;font-size:13px;}
+    .or-row::before,.or-row::after{content:'';flex:1;height:1px;background:#e8eee9;}
+
+    .demo-card{border:1.5px solid #e4e9e6;border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.2s;background:#fff;margin-bottom:16px;}
+    .demo-card:hover{border-color:#1a9c6e;background:#f0fdf6;}
+    .demo-ic{width:46px;height:46px;flex-shrink:0;border-radius:10px;background:#e8f0fe;display:flex;align-items:center;justify-content:center;}
+    .demo-ic i{font-size:23px;color:#1a56b0;}
+    .demo-card h3{font-size:14px;font-weight:600;color:#111;margin-bottom:2px;}
+    .demo-card p{font-size:12px;color:#777;}
+    .demo-arr{margin-left:auto;color:#aaa;font-size:20px;}
+
+    .file-pill{display:none;align-items:center;gap:10px;background:#f0fdf6;border:1px solid #b8e8ce;border-radius:10px;padding:10px 14px;margin-bottom:16px;}
+    .file-pill.show{display:flex;}
+    .file-pill i{font-size:24px;color:#1a9c6e;}
+    .file-name{font-size:14px;font-weight:500;flex:1;color:#111;}
+    .file-size{font-size:12px;color:#777;}
+    .rm-btn{background:none;border:none;cursor:pointer;color:#aaa;font-size:22px;line-height:1;padding:2px;}
+    .rm-btn:hover{color:#e24b4a;}
+
+    .warn-box{background:#fff9ec;border:1px solid #f5c36a;border-radius:10px;padding:11px 14px;font-size:13px;color:#7a4d00;display:flex;gap:9px;align-items:flex-start;margin-bottom:16px;line-height:1.55;}
+    .warn-box i{font-size:17px;color:#d4830e;flex-shrink:0;margin-top:1px;}
+
+    .go-btn{width:100%;padding:15px;border-radius:12px;border:none;background:#1a9c6e;color:#fff;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:background 0.15s;margin-bottom:24px;}
+    .go-btn:hover{background:#0c7a55;}
+    .go-btn:disabled{background:#a7d9c4;cursor:not-allowed;}
+    .go-btn i{font-size:20px;}
+
+    .loading-box{text-align:center;padding:2.5rem 1rem;display:none;}
+    .spinner{width:46px;height:46px;border:3px solid #d1f0e2;border-top-color:#1a9c6e;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 14px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .load-title{font-size:15px;font-weight:600;color:#111;margin-bottom:4px;}
+    .load-sub{font-size:13px;color:#777;}
+    .load-list {list-style:none;display:inline-block;text-align:left;margin-top:14px;padding:0;}
+    .load-list li{font-size:13px;color:#aaa;padding:4px 0;display:flex;align-items:center;gap:8px;}
+    .load-list li.active{color:#111;font-weight:600;}
+    .load-list li.done{color:#1a9c6e;}
+
+    .result-wrap{display:none;}
+    .result-wrap.show{display:block;}
+    .res-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+    .res-hdr h2{font-size:17px;font-weight:600;color:#111;display:flex;align-items:center;gap:7px;}
+    .res-hdr h2 i{color:#1a9c6e;font-size:19px;}
+    .res-date{font-size:12px;color:#888;margin-bottom:14px;}
+    .new-btn{font-size:13px;padding:6px 13px;border:1.5px solid #dde6e0;border-radius:8px;background:#f5f7f5;cursor:pointer;color:#555;display:flex;align-items:center;gap:5px;font-weight:500;}
+    .new-btn:hover{background:#fff;}
+    .model-tag{font-size:11px;background:#e8f0fe;color:#1a56b0;padding:3px 10px;border-radius:100px;font-weight:600;margin-left:8px;}
+
+    .chips{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px;}
+    .chip{font-size:12px;font-weight:600;padding:5px 12px;border-radius:100px;display:flex;align-items:center;gap:4px;background:#eee;color:#555;}
+    .chip i{font-size:12px;}
+    .chip.normal{background:#e8f5d8;color:#2d5d0a;}
+    .chip.high{background:#fce8e8;color:#a02020;}
+    .chip.low{background:#e4effc;color:#1356a0;}
+    .chip.critical{background:#fde8e0;color:#922810;}
+
+    .lab-details-container{margin-bottom:14px;display:grid;grid-template-columns:1fr;gap:10px;}
+    .lab-item-card{background:#fff;border:1px solid #e4e9e6;border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px;border-left:4px solid #ccc;}
+    .lab-item-card.normal{border-left-color:#a3e635;}
+    .lab-item-card.high{border-left-color:#f87171;}
+    .lab-item-card.low{border-left-color:#60a5fa;}
+    .lab-item-card.critical{border-left-color:#fb923c;}
+    .lab-item-row{display:flex;justify-content:space-between;align-items:center;width:100%;gap:8px;}
+    .lab-item-name{font-size:13px;font-weight:700;color:#1e293b;flex:1;}
+    .lab-item-val{font-size:13px;font-weight:700;color:#555;}
+    .lab-item-val.normal{color:#2d5d0a;}
+    .lab-item-val.high{color:#a02020;}
+    .lab-item-val.low{color:#1356a0;}
+    .lab-item-val.critical{color:#922810;}
+    .lab-item-meaning{font-size:12px;color:#64748b;line-height:1.5;margin-top:2px;background:#f8fafc;padding:6px 10px;border-radius:6px;}
+
+    .crit-box{background:#fce8e8;border:1px solid #f09595;border-radius:10px;padding:12px 16px;font-size:14px;color:#a02020;font-weight:600;margin-bottom:12px;display:flex;gap:8px;align-items:center;}
+    .crit-box i{font-size:20px;}
+
+    .res-card{background:#fff;border:1px solid #e4e9e6;border-radius:12px;padding:16px 18px;margin-bottom:10px;}
+    .res-card-title{font-size:11px;font-weight:700;color:#888;margin-bottom:10px;display:flex;align-items:center;gap:5px;text-transform:uppercase;letter-spacing:0.5px;}
+    .res-card-title i{font-size:14px;color:#1a9c6e;}
+    .res-text{font-size:14px;line-height:1.85;color:#222;white-space:pre-wrap;}
+
+    .fq-section{margin-top:12px;}
+    .fq-section p{font-size:12px;color:#888;margin-bottom:7px;font-weight:500;}
+    .fq-btns{display:flex;flex-wrap:wrap;gap:6px;}
+    .fq-btn{font-size:12px;padding:6px 13px;border:1.5px solid #dde6e0;border-radius:100px;background:#f5f7f5;cursor:pointer;color:#555;transition:all 0.15s;font-weight:500;}
+    .fq-btn:hover{background:#edfaf3;color:#0c6644;border-color:#8fd3b4;}
+
+    .hist{margin-top:24px;}
+    .hist-item{width:100%;display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #e4e9e6;border-radius:10px;padding:11px 14px;margin-bottom:8px;cursor:pointer;text-align:left;font-size:13px;color:#111;}
+    .hist-item:hover{border-color:#1a9c6e;background:#f0fdf6;}
+    .hist-item i{font-size:20px;color:#1a9c6e;}
+    .hist-item .h-date{flex:1;font-weight:600;}
+    .hist-item .h-tag{font-size:12px;padding:3px 10px;border-radius:100px;background:#e8f5d8;color:#2d5d0a;}
+    .hist-item .h-tag.bad{background:#fce8e8;color:#a02020;}
+    .hist-item .h-tag.wait{background:#eee;color:#666;}
+    .hist-empty{font-size:13px;color:#999;}
+
+    .footer{margin-top:24px;padding-top:14px;border-top:1px solid #e4e9e6;text-align:center;font-size:11px;color:#aaa;line-height:1.7;}
+    input[type=file]{display:none;}
+    </style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="hero">
+  <div class="hero-icon"><i class="ti ti-stethoscope" aria-hidden="true"></i></div>
+  <h1>อธิบายผลตรวจสุขภาพของคุณ</h1>
+  <p>เพียงถ่ายรูปหรืออัปโหลดใบแจ้งผล<br>AI จะแปลงศัพท์แพทย์เป็นภาษาที่คุณเข้าใจ พร้อมเก็บประวัติให้</p>
+  <div class="pills">
+    <span class="pill pill-green"><i class="ti ti-shield-check"></i> ไม่ใช่การวินิจฉัย</span>
+    <span class="pill pill-blue"><i class="ti ti-sparkles"></i> Powered by Gemini</span>
+    <span class="pill pill-orange"><i class="ti ti-cloud"></i> AWS Serverless</span>
+  </div>
+</div>
+
+<div class="how-grid">
+  <div class="how-card">
+    <div class="how-ic ic-green"><i class="ti ti-camera"></i></div>
+    <h3>ถ่ายหรืออัปโหลด</h3>
+    <p>JPG, PNG, HEIC, PDF</p>
+  </div>
+  <div class="how-card">
+    <div class="how-ic ic-blue"><i class="ti ti-brain"></i></div>
+    <h3>Gemini วิเคราะห์</h3>
+    <p>Multimodal AI อ่านภาพโดยตรง</p>
+  </div>
+  <div class="how-card">
+    <div class="how-ic ic-lime"><i class="ti ti-mail"></i></div>
+    <h3>รับผล + อีเมลแจ้ง</h3>
+    <p>เก็บประวัติทุกครั้ง</p>
+  </div>
+</div>
+
+<div class="auth-box">
+  <div class="ak-title" id="auth-out"><i class="ti ti-lock"></i> เข้าสู่ระบบเพื่อเก็บประวัติผลตรวจอย่างปลอดภัย</div>
+  <button class="ak-btn" id="login-btn" onclick="login()"><i class="ti ti-login"></i> เข้าสู่ระบบ / สมัคร</button>
+  <div class="ak-title" id="auth-in" hidden><i class="ti ti-user-check"></i> <span id="user-email"></span></div>
+  <button class="ak-btn ghost" id="logout-btn" onclick="logout()" hidden><i class="ti ti-logout"></i> ออกจากระบบ</button>
+</div>
+
+<main id="app" hidden>
+
+<div class="steps-bar">
+  <div class="stp active" id="st1"><i class="ti ti-file-upload"></i><span>เลือกไฟล์</span></div>
+  <div class="stp" id="st2"><i class="ti ti-bucket"></i><span>S3</span></div>
+  <div class="stp" id="st3"><i class="ti ti-lambda"></i><span>Lambda</span></div>
+  <div class="stp" id="st4"><i class="ti ti-brain"></i><span>Gemini</span></div>
+  <div class="stp" id="st5"><i class="ti ti-database"></i><span>ผลลัพธ์</span></div>
+</div>
+<div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
+
+<div id="upload-area">
+  <div class="slabel"><i class="ti ti-photo-scan"></i> อัปโหลดใบแจ้งผลตรวจ</div>
+
+  <div class="drop-zone" id="dz" onclick="$('fin').click()">
+    <i class="ti ti-cloud-upload up-ic"></i>
+    <h3>ลากไฟล์มาวางที่นี่</h3>
+    <p>หรือแตะเพื่อเลือกไฟล์จากอุปกรณ์ของคุณ</p>
+    <button class="pick-btn" onclick="event.stopPropagation();$('fin').click()">
+      <i class="ti ti-folder-open"></i> เลือกไฟล์
+    </button>
+    <p class="fmt">รองรับ JPG · PNG · HEIC · PDF · ไม่เกิน 10 MB</p>
+  </div>
+  <input type="file" id="fin" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf">
+
+  <div class="or-row">หรือ</div>
+
+  <div class="demo-card" onclick="loadDemo()" role="button">
+    <div class="demo-ic"><i class="ti ti-test-pipe"></i></div>
+    <div>
+      <h3>ทดลองด้วยผลเลือดจำลอง</h3>
+      <p>ดูตัวอย่างการวิเคราะห์โดยไม่ต้องอัปโหลดไฟล์จริง</p>
+    </div>
+    <i class="ti ti-arrow-right demo-arr"></i>
+  </div>
+
+  <div class="file-pill" id="fpill">
+    <i class="ti ti-file-text"></i>
+    <div style="flex:1;">
+      <div class="file-name" id="fname">ไฟล์</div>
+      <div class="file-size" id="fsize"></div>
+    </div>
+    <button class="rm-btn" onclick="removeFile()" aria-label="ลบไฟล์"><i class="ti ti-x"></i></button>
+  </div>
+
+  <div class="warn-box">
+    <i class="ti ti-shield"></i>
+    <span>กรุณาลบชื่อ-นามสกุล และเลขบัตรประชาชนออกก่อนอัปโหลด เพื่อความปลอดภัยของข้อมูลส่วนตัว</span>
+  </div>
+
+  <button class="go-btn" id="gobtn" onclick="startAnalysis()" disabled>
+    <i class="ti ti-sparkles"></i>
+    วิเคราะห์ด้วย Gemini AI
+  </button>
+</div>
+
+<div class="loading-box" id="lbox">
+  <div class="spinner"></div>
+  <div class="load-title">กำลังวิเคราะห์...</div>
+  <div class="load-sub">ระบบจะส่งอีเมลแจ้งเมื่อเสร็จ ปิดหน้านี้ได้</div>
+  <ul class="load-list">
+    <li class="active" id="ll1"><i class="ti ti-loader"></i> อัปโหลดไฟล์เข้า Amazon S3</li>
+    <li id="ll2"><i class="ti ti-circle"></i> S3 Trigger เรียก AWS Lambda</li>
+    <li id="ll3"><i class="ti ti-circle"></i> Gemini อ่านและแปลผลภาษาไทย</li>
+    <li id="ll4"><i class="ti ti-circle"></i> บันทึก DynamoDB + แจ้งเตือน SNS</li>
+  </ul>
+</div>
+
+<div class="result-wrap" id="rwrap">
+  <div class="res-hdr">
+    <h2><i class="ti ti-report-medical"></i> ผลการวิเคราะห์ <span class="model-tag">Gemini</span></h2>
+    <button class="new-btn" onclick="reset()"><i class="ti ti-refresh"></i> เริ่มใหม่</button>
+  </div>
+  <div class="res-date" id="rdate"></div>
+  <div class="crit-box" id="crit" hidden><i class="ti ti-alert-triangle"></i> พบค่าวิกฤตที่เป็นอันตรายต่อสุขภาพ! กรุณาติดต่อหรือเข้าพบแพทย์โดยเร็ว</div>
+
+  <div class="chips" id="chips"></div>
+
+  <div class="slabel"><i class="ti ti-microscope"></i> รายการตรวจสุขภาพที่พบและความหมาย</div>
+  <div class="lab-details-container" id="lab-details"></div>
+
+  <div class="res-card">
+    <div class="res-card-title"><i class="ti ti-activity"></i> สรุปผลตรวจแบบเข้าใจง่าย</div>
+    <div class="res-text" id="rsum"></div>
+  </div>
+  <div class="res-card">
+    <div class="res-card-title"><i class="ti ti-list-check"></i> คำแนะนำและแนวทางปฏิบัติตัว</div>
+    <div class="res-text" id="radv"></div>
+  </div>
+  <div class="res-card" id="ask-card" hidden>
+    <div class="res-card-title"><i class="ti ti-message-question"></i> คำตอบเพิ่มเติม</div>
+    <div class="res-text" id="rask"></div>
+  </div>
+  <div class="fq-section">
+    <p>ถามเพิ่มเติม:</p>
+    <div class="fq-btns">
+      <button class="fq-btn" onclick="sendPrompt('ค่าที่ผิดปกติในผลตรวจนี้หมายความว่าอะไร ควรกังวลไหม?')">ค่าผิดปกติหมายถึงอะไร?</button>
+      <button class="fq-btn" onclick="sendPrompt('จากผลตรวจนี้ ควรกินอาหารแบบไหนและหลีกเลี่ยงอะไร?')">ควรกินอะไร?</button>
+      <button class="fq-btn" onclick="sendPrompt('จากผลตรวจนี้ ควรไปพบแพทย์เมื่อไหร่ และควรตรวจซ้ำตอนไหน?')">ควรพบแพทย์เมื่อไหร่?</button>
+      <button class="fq-btn" onclick="sendPrompt('จากผลตรวจนี้ ออกกำลังกายแบบไหนดีและปลอดภัย?')">ออกกำลังกายแบบไหนดี?</button>
+    </div>
+  </div>
+  <div class="warn-box" style="margin-top:14px;">
+    <i class="ti ti-alert-triangle"></i>
+    <span>ผลนี้เป็นคำอธิบายข้อมูลเบื้องต้นเพื่อความเข้าใจ ไม่ใช่การวินิจฉัยทางการแพทย์ กรุณาปรึกษาแพทย์เสมอ</span>
+  </div>
+</div>
+
+<div class="hist">
+  <div class="slabel"><i class="ti ti-history"></i> ประวัติผลตรวจของฉัน</div>
+  <div id="hist-list"><p class="hist-empty">กำลังโหลด...</p></div>
+</div>
+
+</main>
+
+<div class="footer">สหัสกรณ์ พิริยะณิชากรณ์ · เดชาวัต พูลเพิ่ม · ศิริโชค ลีลาถาวรกุล · กลุ่ม Ice Cute Boy · CS460<br>
+<span style="color:#4285f4;">Amplify · Cognito · API Gateway · Lambda · S3 · DynamoDB · SNS · EventBridge · Gemini</span></div>
+</div>
+
+<script>
+// ===== tofu apply เติม 3 ค่านี้ให้เอง / ถ้า deploy ด้วยมือให้แทนที่เอง =====
+const CFG = {
+  apiUrl: '__API_URL__',                // API Gateway > Invoke URL (ไม่มี / ท้าย)
+  cognitoDomain: '__COGNITO_DOMAIN__',  // https://<domain>.auth.us-east-1.amazoncognito.com
+  clientId: '__CLIENT_ID__',            // Cognito > App client ID
+};
+const REDIRECT = location.origin + '/';  // ต้องตรงกับ Callback URL / Sign-out URL ใน Cognito
+
+const DEMO=`ผลตรวจสุขภาพ (ข้อมูลจำลอง) อายุ 42 ปี
+Hemoglobin 12.1 g/dL (ปกติ 13.5-17.5)
+Fasting Blood Sugar 118 mg/dL (ปกติ 70-99)
+HbA1c 6.2% (ปกติ <5.7%)
+Total Cholesterol 235 mg/dL (ปกติ <200)
+LDL 158 mg/dL (ปกติ <130)
+HDL 42 mg/dL (ปกติ >40)
+Triglyceride 195 mg/dL (ปกติ <150)
+SGPT ALT 52 U/L (ปกติ 10-40)
+Creatinine 0.9 mg/dL (ปกติ 0.7-1.2)`;
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let file=null,isDemo=false,idToken=null,currentId=null,histItems=[];
+
+// ---------- Cognito login (Authorization code + PKCE, no SDK) ----------
+const b64url=bytes=>btoa(String.fromCharCode(...bytes)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+const claims=t=>{try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));}catch{return null;}};
+
+async function login(){
+  const verifier=b64url(crypto.getRandomValues(new Uint8Array(32)));
+  sessionStorage.setItem('pkce',verifier);
+  const challenge=b64url(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier))));
+  location.href=CFG.cognitoDomain+'/oauth2/authorize?'+new URLSearchParams({
+    response_type:'code',client_id:CFG.clientId,redirect_uri:REDIRECT,scope:'openid email',
+    code_challenge_method:'S256',code_challenge:challenge});
+}
+
+function logout(){
+  sessionStorage.clear();
+  location.href=CFG.cognitoDomain+'/logout?'+new URLSearchParams({client_id:CFG.clientId,logout_uri:REDIRECT});
+}
+
+async function initAuth(){
+  const code=new URLSearchParams(location.search).get('code');
+  if(code){
+    history.replaceState(null,'',REDIRECT);
+    const r=await fetch(CFG.cognitoDomain+'/oauth2/token',{method:'POST',
+      headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:new URLSearchParams({grant_type:'authorization_code',client_id:CFG.clientId,code,
+        redirect_uri:REDIRECT,code_verifier:sessionStorage.getItem('pkce')||''})});
+    const t=await r.json();
+    if(!t.id_token)throw new Error(t.error||'token exchange failed');
+    sessionStorage.setItem('idToken',t.id_token);
+  }
+  const t=sessionStorage.getItem('idToken'),c=t&&claims(t);
+  if(!c||c.exp*1000<Date.now()+60000){sessionStorage.removeItem('idToken');return;}
+  idToken=t;
+  $('user-email').textContent=c.email||'';
+  $('auth-out').hidden=$('login-btn').hidden=true;
+  $('auth-in').hidden=$('logout-btn').hidden=false;
+  $('app').hidden=false;
+  loadHistory();
+}
+initAuth().catch(e=>alert('เข้าสู่ระบบไม่สำเร็จ: '+e.message));
+
+async function api(method,path,body){
+  const r=await fetch(CFG.apiUrl+path,{method,
+    headers:{Authorization:'Bearer '+idToken,'Content-Type':'application/json'},
+    body:body&&JSON.stringify(body)});
+  if(r.status===401){sessionStorage.removeItem('idToken');alert('เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่');location.href=REDIRECT;}
+  const d=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(d.error||d.message||'HTTP '+r.status);
+  return d;
+}
+
+// ---------- file picking ----------
+const dz=$('dz');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag');});
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag');if(e.dataTransfer.files[0])handleFile(e.dataTransfer.files[0]);});
+$('fin').addEventListener('change',e=>{if(e.target.files[0])handleFile(e.target.files[0]);});
+
+function showPill(name,size){
+  $('fname').textContent=name;$('fsize').textContent=size;
+  $('fpill').classList.add('show');$('gobtn').disabled=false;
+}
+function handleFile(f){
+  if(f.size>10*1024*1024){alert('ไฟล์ใหญ่เกิน 10 MB');return;}
+  file=f;isDemo=false;showPill(f.name,(f.size/1024).toFixed(1)+' KB');
+}
+function loadDemo(){file=null;isDemo=true;showPill('ผลเลือดจำลอง (Demo)','ข้อมูลตัวอย่าง');}
+function removeFile(){
+  file=null;isDemo=false;$('fin').value='';
+  $('fpill').classList.remove('show');$('gobtn').disabled=true;
+}
+
+function setStep(n){
+  for(let i=1;i<=5;i++){
+    const el=$('st'+i);
+    el.classList.toggle('done',i<n);el.classList.toggle('active',i===n);
+  }
+  $('prog').style.width=((n-1)/4*100)+'%';
+}
+function setLS(n){
+  for(let i=1;i<=4;i++){
+    const el=$('ll'+i),ic=el.querySelector('i');
+    el.classList.toggle('done',i<n);el.classList.toggle('active',i===n);
+    ic.className='ti '+(i<n?'ti-check':i===n?'ti-loader':'ti-circle');
+  }
+}
+
+// ---------- upload -> S3 -> Lambda -> poll DynamoDB ----------
+async function analyze(){
+  const blob=isDemo?new Blob([DEMO],{type:'text/plain'}):file;
+  const up=await api('POST','/upload-url',{contentType:blob.type});
+  const fd=new FormData();
+  for(const[k,v]of Object.entries(up.fields))fd.append(k,v);
+  fd.append('file',blob);  // must be the last field for S3 POST
+  const s3=await fetch(up.url,{method:'POST',body:fd});
+  if(!s3.ok)throw new Error('อัปโหลดเข้า S3 ไม่สำเร็จ ('+s3.status+')');
+  setStep(3);setLS(2);
+  for(let i=0;i<40;i++){
+    await sleep(3000);
+    if(i===1){setStep(4);setLS(3);}
+    const r=await api('GET','/reports/'+encodeURIComponent(up.reportId));
+    if(r.status==='DONE'){setLS(5);return r;}
+    if(r.status==='ERROR')throw new Error(r.error||'วิเคราะห์ไม่สำเร็จ');
+  }
+  throw new Error('ใช้เวลานานกว่าปกติ ผลจะแสดงในประวัติเมื่อเสร็จ');
+}
+
+async function startAnalysis(){
+  $('upload-area').hidden=true;$('lbox').style.display='block';$('rwrap').classList.remove('show');
+  setStep(2);setLS(1);
+  try{
+    const r=await analyze();
+    setStep(5);$('prog').style.width='100%';
+    showResult(r);
+  }catch(e){
+    $('upload-area').hidden=false;
+    alert('เกิดข้อผิดพลาด: '+e.message);
+    setStep(1);
+  }finally{
+    $('lbox').style.display='none';
+    loadHistory();
+  }
+}
+
+function showResult(report){
+  const data=report.result||{};
+  currentId=report.reportId;
+  $('upload-area').hidden=true;
+  $('rwrap').classList.add('show');
+  $('rdate').textContent='ตรวจเมื่อ '+new Date(report.createdAt).toLocaleString('th-TH');
+  $('crit').hidden=!data.critical_alert;
+  $('rsum').textContent=data.summary||'ไม่มีข้อมูลสรุป';
+  $('radv').textContent=data.advice||'ไม่มีข้อมูลคำแนะนำ';
+  $('ask-card').hidden=true;
+
+  const icons={normal:'ti-check',high:'ti-arrow-up',low:'ti-arrow-down',critical:'ti-alert-triangle'};
+  const labels={normal:'ปกติ',high:'สูง',low:'ต่ำ',critical:'วิกฤต'};
+  const items=data.status||[];
+  $('chips').innerHTML=items.map(s=>
+    `<div class="chip ${esc(s.status)}"><i class="ti ${icons[s.status]||'ti-minus'}"></i>${esc(s.name)}: ${esc(s.value)}</div>`).join('');
+  $('lab-details').innerHTML=items.map(s=>`
+    <div class="lab-item-card ${esc(s.status)}">
+      <div class="lab-item-row">
+        <span class="lab-item-name">${esc(s.name)}</span>
+        <span class="lab-item-val ${esc(s.status)}">${esc(s.value)} (${labels[s.status]||'ไม่ระบุ'})</span>
+      </div>
+      <div class="lab-item-meaning"><strong>ความหมาย:</strong> ${esc(s.meaning||'ไม่มีข้อมูลคำอธิบาย')}</div>
+    </div>`).join('');
+  $('rwrap').scrollIntoView({behavior:'smooth'});
+}
+
+async function sendPrompt(question){
+  $('ask-card').hidden=false;$('rask').textContent='กำลังถาม Gemini...';
+  try{$('rask').textContent=(await api('POST','/ask',{reportId:currentId,question})).answer;}
+  catch(e){$('rask').textContent='ระบบตอบคำถามขัดข้องชั่วคราว: '+e.message;}
+}
+
+// ---------- history (DynamoDB) ----------
+async function loadHistory(){
+  try{histItems=(await api('GET','/reports')).items;}
+  catch(e){$('hist-list').innerHTML=`<p class="hist-empty">โหลดประวัติไม่สำเร็จ: ${esc(e.message)}</p>`;return;}
+  $('hist-list').innerHTML=histItems.length?histItems.map(it=>{
+    const bad=(it.result?.status||[]).filter(s=>s.status!=='normal').length;
+    const [cls,label]=it.status==='DONE'?(bad?['bad',`ผิดปกติ ${bad} รายการ`]:['','ปกติทั้งหมด'])
+      :it.status==='ERROR'?['wait','วิเคราะห์ไม่สำเร็จ']:['wait','กำลังวิเคราะห์'];
+    return `<button class="hist-item" data-id="${esc(it.reportId)}"><i class="ti ti-file-report"></i>
+      <span class="h-date">${esc(new Date(it.createdAt).toLocaleString('th-TH'))}</span>
+      <span class="h-tag ${cls}">${label}</span></button>`;
+  }).join(''):'<p class="hist-empty">ยังไม่มีประวัติผลตรวจ</p>';
+}
+$('hist-list').addEventListener('click',e=>{
+  const b=e.target.closest('[data-id]');
+  const it=b&&histItems.find(x=>x.reportId===b.dataset.id);
+  if(it&&it.status==='DONE'){setStep(5);$('prog').style.width='100%';showResult(it);}
+});
+
+function reset(){
+  $('rwrap').classList.remove('show');
+  $('upload-area').hidden=false;
+  removeFile();setStep(1);
+}
+</script>
+</body>
+</html>
