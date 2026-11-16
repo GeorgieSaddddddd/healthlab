@@ -12,9 +12,9 @@
 |---|---|
 | เวลาโดยประมาณ | **~60 นาที** |
 | สภาพแวดล้อม | AWS Academy Learner Lab · region **us-east-1 (N. Virginia)** |
-| สร้างด้วย | **AWS Console** (กดเอง) + **CloudShell 4 คำสั่ง** สำหรับใส่ไฟล์ (Part 1, 5, 6, 10) |
+| สร้างด้วย | **AWS Console** (กดเอง) + **CloudShell 4 คำสั่ง** สำหรับใส่ไฟล์ (Part 1, 5, 6, 10) + **1 คำสั่ง** ลบทุกอย่าง (Part 12) |
 | ค่าใช้จ่าย | ~$0 (serverless ทั้งหมด ไม่มี EC2/NAT/RDS) |
-| ทดสอบจริงแล้ว | ✅ ทุก Part บน Learner Lab เมื่อ 15 พ.ย. 2569 · สคริปต์ใน Part 1, 5, 6, 10 ทดสอบเมื่อ 16 พ.ย. 2569 |
+| ทดสอบจริงแล้ว | ✅ ทุก Part บน Learner Lab เมื่อ 15 พ.ย. 2569 · สคริปต์ใน Part 1, 5, 6, 10, 12 ทดสอบเมื่อ 16 พ.ย. 2569 |
 | ส่วนที่เป็นโค้ด | ไม่ต้องแก้โค้ดเอง · วาง JSON สั้นๆ 2 ก้อน (Part 2, 4) |
 
 > **อย่าคัดลอกค่า/JSON จาก PDF หรือ Word** — โปรแกรมจะเปลี่ยน `"` `'` `-` เป็นตัวอักษรอื่นจนใช้ไม่ได้ ให้คัดลอกจาก [repo นี้](https://github.com/haru-mishi/healthlab) หรือจากคู่มือฉบับมีภาพ (มีปุ่ม Copy)
@@ -461,6 +461,8 @@ bash <(curl -sL https://raw.githubusercontent.com/haru-mishi/healthlab/main/scri
 | login error `redirect_mismatch` | Return/callback URL ใน Cognito ไม่ตรงกับ URL ที่เปิด — ต้องลงท้าย `/` เหมือนกัน |
 | กดเข้าสู่ระบบแล้วไม่ไปหน้า Cognito | ยังไม่ได้รัน `web.sh` รอบสอง (Part 10) หรือรันแล้วขึ้น `placeholders` (ชื่อ API / app client ไม่ตรง) · กด Ctrl+F5 ล้าง cache |
 | `admin-initiate-auth` error `Auth flow not enabled` | ยังไม่ได้ทำขั้น 7.5 |
+| Console ขึ้น `Access denied` … `voc-cancel-cred` / CloudShell ขึ้น `Unable to create the environment` | session ของ Learner Lab หมดเวลา (~4 ชม.) → หน้า Learner Lab กด **Start Lab** รอจุดเขียว แล้วกด **AWS** เข้า Console ใหม่ (resource ที่สร้างไว้ยังอยู่ครบ) |
+| Cognito ขึ้น `Incorrect username or password` | รหัสผิด หรืออีเมลนี้ไม่มีใน user pool ปัจจุบัน (เช่นสมัครไว้ใน pool รอบก่อนที่ลบไปแล้ว) → กด **Forgot your password?** หรือ **Create an account** ใหม่ |
 | สร้าง bucket ไม่ได้ `BucketAlreadyExists` | ชื่อซ้ำกับคนอื่นทั่วโลก → เติมรหัสนักศึกษา/ตัวอักษรเพิ่ม |
 
 ---
